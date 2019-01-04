@@ -41,6 +41,32 @@ class Word:
         self.englishDef = english.lower()
         self.frenchDef = french.lower()
 
+class Adjective (Word):
+    'Class for the adjective word subset'
+    plural = ''
+    feminine = ''
+
+    def __init__(self, english, french, pluralEnd = '', femEnd = ''):
+        self.englishDef = english.lower()
+        self.frenchDef = french.lower()
+        self.plural = french.lower() + pluralEnd.lower()
+        self.feminine = french.lower() + femEnd.lower()
+
+class Noun (Word):
+    'Class for the noun word subset'
+    plural = ''
+    gender = WordGender
+
+    def __init__(self, english, french, pluralEnd = '', gen = WordGender):
+        self.englishDef = english.lower()
+        self.frenchDef = french.lower()
+        self.plural = french.lower() + pluralEnd.lower()
+        self.gender = gen
+
+class Misc (Word):
+    'Class for words that are of grammatical importance or are otherwise unclassifiable using the other classes'
+    pass
+
 class Verb (Word):
     'Class for the verb word subset'
     verbType = IrregularVerb

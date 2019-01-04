@@ -17,3 +17,10 @@ newWord.commentText = "NUMBER"
 print("English: " + newWord.englishDef)
 print("French: " + newWord.frenchDef)
 print("Comment: " + newWord.commentText)
+
+newAdjective = Adjective("blue", "bleu", 's')
+print("J'ai deux " + newAdjective.plural + " garcons")
+
+newNoun = Noun("house", "MAISON", "s", Feminine)
+print(newNoun.gender)
+print("Je vais retourner aux " + newNoun.plural)
