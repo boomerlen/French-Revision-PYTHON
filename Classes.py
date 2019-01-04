@@ -165,3 +165,12 @@ class Verb (Word):
             self.futureSimpleConjugation[ILS()] = futureStem + 'ont'
         else:
             return 'NO VERB TYPE DEFINED'
+
+class Rule:
+    'Class for details of grammatical rules and examples'
+    description = ''
+    example = ''
+
+    def __init__(self, desc, ex = ''):
+        self.description = desc.lower()
+        self.example = ex.lower()
