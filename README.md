@@ -6,3 +6,6 @@ List of things that need to happen for this to work:
 3- Some GUI
 
 Probably will start with the 1st and 3rd because if it's anything like the C project, 2 is gonna b a pain.
+
+Dependencies:
+MySQLdb (mysqlclient)

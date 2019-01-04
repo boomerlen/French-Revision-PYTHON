@@ -2,6 +2,10 @@
 # French Revision Helper main file
 # Hugo Sebesta
 
+# External modules for import:
+import MySQLdb
+
+# My modules for import:
 # Classes imports the following classes:
 # Word - Generic Word class
 # Adjective - Adjective Word class
@@ -16,23 +20,24 @@
 # JE (0), TU (1), ON (2), NOUS (3), VOUS (4), ILS (5)
 from Classes import *
 
-print("Hello World!")
+
+# Testing Stuff:
+#print("Hello World!")
 
 # Testing concepts
-hello = "this is a string"
-newHello = hello[:-3]
-print(newHello)
+# newHello = hello[:-3]
+# print(newHello)
 
-print("Attempting word declaration")
-newWord = Word("one", "un")
-newWord.commentText = "NUMBER"
-print("English: " + newWord.englishDef)
-print("French: " + newWord.frenchDef)
-print("Comment: " + newWord.commentText)
+# print("Attempting word declaration")
+# newWord = Word("one", "un")
+# newWord.commentText = "NUMBER"
+# print("English: " + newWord.englishDef)
+# print("French: " + newWord.frenchDef)
+# print("Comment: " + newWord.commentText)
 
-newAdjective = Adjective("blue", "bleu", 's')
-print("J'ai deux " + newAdjective.plural + " garcons")
+# newAdjective = Adjective("blue", "bleu", 's')
+# print("J'ai deux " + newAdjective.plural + " garcons")
 
-newNoun = Noun("house", "MAISON", "s", Feminine)
-print(newNoun.gender)
-print("Je vais retourner aux " + newNoun.plural)
+# newNoun = Noun("house", "MAISON", "s", Feminine)
+# print(newNoun.gender)
+# print("Je vais retourner aux " + newNoun.plural)
