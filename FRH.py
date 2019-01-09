@@ -74,68 +74,75 @@ def initWordList(curs):
     try:
         curs.execute("SELECT * FROM adjective")
         adjectives = curs.fetchall()
-        for row in adjectives:
-            eng = adjectives[0]
-            fre = adjectives[1]
-            plu = adjectives[2]
-            fem = adjectives[3]
-            com = adjectives[4]
-            newAdj = Adjective(eng, fre, plu, fem)
-            newAdj.comment = com
-            words.append(newAdj)
     except:
         print("Error: Unable to fetch adjectives from server")
+        return
+    for row in adjectives:
+        eng = row[0]
+        fre = row[1]
+        plu = row[2]
+        fem = row[3]
+        com = row[4]
+        newAdj = Adjective(eng, fre, plu, fem)
+        newAdj.comment = com
+        words.append(newAdj)
     try:
         curs.execute("SELECT * FROM misc")
         misc = curs.fetchall()
-        for row in misc:
-            eng = misc[0]
-            fre = misc[1]
-            com = misc[2]
-            newMisc = Misc(eng, fre)
-            newMisc.comment = com
-            words.append(newMisc)
     except:
         print("Error: Unable to fetch miscs from server")
+        return False
+    for row in misc:
+        eng = row[0]
+        fre = row[1]
+        com = row[2]
+        newMisc = Misc(eng, fre)
+        newMisc.comment = com
+        words.append(newMisc)
     try:
         curs.execute("SELECT * FROM noun")
         nouns = curs.fetchall()
-        for row in nouns:
-            eng = nouns[0]
-            fre = nouns[1]
-            plu = nouns[2]
-            gen = nouns[3]
-            com = nouns[4]
-            newNoun = Noun(eng, fre, plu)
-            if gen == 'f':
-                newNoun.gender = Feminine()
-            else:
-                newNoun.gender = Masculine()
-            newNoun.comment = com
-            words.append(newNoun)
     except:
         print("Error: Unable to fetch nouns from server")
+        return False
+    for row in nouns:
+        eng = row[0]
+        fre = row[1]
+        plu = row[2]
+        gen = row[3]
+        com = row[4]
+        newNoun = Noun(eng, fre, plu)
+        if gen == 'f':
+            newNoun.gender = Feminine()
+        else:
+            newNoun.gender = Masculine()
+        newNoun.comment = com
+        words.append(newNoun)
     try:
         curs.execute("SELECT * FROM verb")
         verbs = curs.fetchall()
     except:
         print("Error: Unable to fetch verbs from server")
+        return False
     pres_conj = []
     imp_conj = []
     futur_conj = []
     for row in verbs:
-        eng = verbs[0]
-        fre = verbs[1]
-        type = verbs[2]
-        reflex = verbs[3]
-        past_p = verbs[4]
-        for i in range(6):
-            pres_conj[i] = verbs[5 + i]
-        #for i in range(6):
-            imp_conj[i] = verbs[11 + i]
-        #for i in range(6):
-            futur_conj = verbs[17 + i]
-        #usesEtre = verbs[23]
+        eng = row[0]
+        fre = row[1]
+        type = row[2]
+        reflex = row[3]
+        past_p = row[4]
+        try:
+            for i in range(6):
+                pres_conj[i] = row[5 + i]
+            for i in range(6):
+                imp_conj[i] = row[11 + i]
+            for i in range(6):
+                futur_conj = row[17 + i]
+            usesEtre = row[23]
+        except:
+            print("NOTE: Verb " + eng + " lacks some values. Fix please user!")
         newVerb = Verb(eng, fre)
         if type == "0":
             newVerb.type = ERVerb
@@ -154,7 +161,6 @@ def initWordList(curs):
         newVerb.imparfaitConjugation = imp_conj
         newVerb.futureSimpleConjugation = futur_conj
         words.append(newVerb)
-
 
     return words
 
@@ -194,28 +200,19 @@ nounList = []
 adjectiveList = []
 miscWordList = []
 for word in wordList:
-    if word.__name__ == 'Adjective':
+    if word.__class__.__name__ == 'Adjective':
         adjectiveList.append(word)
-    elif word.__name__ == 'Noun':
+    elif word.__class__.__name__ == 'Noun':
         nounList.append(word)
-    elif word.__name__ == "Misc":
+    elif word.__class__.__name__ == "Misc":
         miscWordList.append(word)
-    elif word.__name__ == "Verb":
+    elif word.__class__.__name__ == "Verb":
         verbList.append(word)
 # Defined all word lists
 ruleList = initRuleList(cursor)
 # Init Done
 
 # TEST:
-try:
-    cursor.execute("SELECT * FROM verb")
-except:
-    print("Line 212 Failure")
-try:
-    testVerb = cursor.fetchall()
-except:
-    print("Line 216 failure")
-print(testVerb)
 
 for x in wordList:
     print(x.englishDef)
