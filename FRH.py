@@ -56,8 +56,8 @@ from Classes import *
 #   example | varchar(80)
 
 # Functions defined in this file (descriptions):
-# Initialise word lists (this is where C would've been better but fuck me the GUI (and SQL server con) would be impossible and I don't think the memory issues will be that bad)
-# Initialise rule lists
+# x Initialise word lists (this is where C would've been better but fuck me the GUI (and SQL server con) would be impossible and I don't think the memory issues will be that bad)
+# x Initialise rule lists
 # Add word
 # Add rule
 # Modify rule or word
@@ -69,6 +69,7 @@ from Classes import *
 
 # Functions
 def initWordList(curs):
+    'Returns a list of all words from the database'
     # Returning a list of all words
     words = []
     try:
@@ -165,6 +166,7 @@ def initWordList(curs):
     return words
 
 def initRuleList(curs):
+    'Returns a list of all rules from the database'
     rules = []
     try:
         curs.execute("SELECT * FROM rule")
@@ -176,6 +178,59 @@ def initRuleList(curs):
     except:
         print("Error: Unable to fetch rules from server")
     return rules
+
+def addWord(curs, word):
+    'Adds a word to the database'
+    if word.__class__.__name__ == "Adjective":
+        if word.gender.__class__.__name__ == "Masculine":
+            gender = 'm'
+        else:
+            gender = 'f'
+        query = "INSERT INTO adjective (english, french, plural, feminine, comment) VALUES ('" + word.englishDef + "', '" + word.frenchDef + "', '" + word.pluralEnd + "', '" + fem + "', '" + word.commentText + "')"
+        try:
+            curs.execute(query)
+        except:
+            print("Error: Failed to add word")
+            return False
+    elif word.__class__.__name__ == "Noun":
+        if word.gender.__class__.__name__ == "Masculine":
+            gender = 'm'
+        else:
+            gender = 'f'
+        query = "INSERT INTO noun (english, french, plural, gender, comment) VALUES ('" + word.englishDef + "', '" + word.frenchDef + "', '" + word.pluralEnd + "', '" + gender + "', '" + word.commentText + "')"
+        try:
+            curs.execute(query)
+        except:
+            print("Error: Failed to add word")
+            return False
+    elif word.__class__.__name__ == "Misc":
+        query = "INSERT INTO misc (english, french, comment) VALUES ('" + word.englishDef + "', '" word.frenchDef + "', '" + word.commentText + "')"
+        try:
+            curs.execute(query)
+        except:
+            print("Error: Failed to add word")
+            return False
+    elif word.__class__.__name == "Verb":
+        # SUICIDE TIME
+        if word.verbType.__class__.__name__ == ERVerb: # Verb TYpe covered
+            type = 0
+        elif word.verbType.__class__.__name__ == REVerb:
+            type = 1
+        elif word.verbType.__class__.__name__ == IRVerb:
+            type = 2
+        else:
+            type = 3
+        if word.isReflexive: # Reflexive covered
+            reflex = 'y'
+        else:
+            reflex = 'n'
+        if word.usesEtreInPasseCompose: # Etre covered
+            etre = 'y'
+        else:
+            etre = 'n'
+        # Huge expression time
+        query = "INSERT INTO verb (english, french, type, reflexive, past_participle, je_pres_conj, tu_pres_conj, on_pres_conj, nous_pres_conj, vous_pres_conj, ils_pres_conj, je_imp_conj, tu_imp_conj, on_imp_conj, nous_imp_conj, vous_imp_conj, ils_imp_conj, je_futur_conj, tu_futur_conj, on_futur_conj, nous_futur_conj, vous_futur_conj, ils_futur_conj, etre) VALUES ('" + # FINISH THIS SHIT LATER CUZ I WANNA DIE ITS LATE FUCK MEEEEEEE
+    return
 # Main script
 
 # SQL Server Connection
@@ -212,11 +267,4 @@ for word in wordList:
 ruleList = initRuleList(cursor)
 # Init Done
 
-# TEST:
-
-for x in wordList:
-    print(x.englishDef)
-#while 1:
-    # Do thing
-    #break
 database.close()
