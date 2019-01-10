@@ -46,7 +46,7 @@ from Classes import *
 #   french | varchar(30)
 #   type | char(1) - either 0, 1, 2, 3 - er, re, ir, irregular
 #   reflexive | char(1) - either 'y' or 'n'
-#   past_participle | varchar(10)
+#   past_participle | varchar(10) - NOTE: SHOULD BE INCREASED
 #   (je-ils)_pres_conj | varchar(30) - Conjugation for je-ils in present tense (different column for each subject)
 #   (je-ils)_imp_conj | varchar(30) - Conjugation for je-ils in l'imparfait
 #   (je-ils)_futur_conj | varchar(30) - Conjugation for je-ils in le futur simple
@@ -60,11 +60,11 @@ from Classes import *
 # x Initialise rule lists
 # x Add word
 # x Add rule
-# Modify rule (x) or word
-# Delete rule or word
-# View rule or word
-# List words by english or french
-# List rules
+# x Modify rule or word
+# x Delete rule or word
+# View rule or word - Dependant on GUI
+# List words by english or french - Dependant on GUI
+# List rules - Dependant on GUI
 # Others when I think of them
 
 # Functions
@@ -300,6 +300,7 @@ def addWord(curs, word, db):
     return None
 
 def addRule(curs, rule, db):
+    "Inserts a rule into the SQL Server"
     query = "INSERT INTO rule (name, description, example) VALUES ('" + rule.name + "', '"+ rule.description + "', '"
     if not rule.example:
         query = query + "')"
@@ -314,6 +315,7 @@ def addRule(curs, rule, db):
     return None
 
 def modifyRule(curs, db, rule, newRule):
+    "Modifies a Rule in the SQL Server"
     queryStem = "UPDATE rule SET "
     if rule.example != newRule.example:
         newQuery = queryStem + "example = '" + newRule.example + "' WHERE NAME = '" + rule.name + "'"
@@ -596,6 +598,19 @@ def modifyWord(curs, db, word, newWord):
     return False
 
 def deleteObject(curs, db, obj):
+    "Deletes an object from the SQL server"
+    if obj.__class__.__name__ != "Rule":
+        query = "DELETE FROM " + obj.__class__.__name__.lower() + " WHERE english = '" + obj.englishDef + "'"
+    else:
+        query = "DELETE FROM rule WHERE name = '" + obj.name + "'"
+    try:
+        curs.execute(query)
+        db.commit()
+    except:
+        db.rollback()
+        print("Error: Failed to delete object!")
+        return False
+    return None
 # Main script
 
 # SQL Server Connection
