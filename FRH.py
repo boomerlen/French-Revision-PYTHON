@@ -4,6 +4,8 @@
 
 # External modules for import:
 import MySQLdb
+from tkinter import *
+from tkinter import messagebox
 
 # My modules for import:
 # Classes imports the following classes:
@@ -60,8 +62,8 @@ from Classes import *
 # x Initialise rule lists
 # x Add word
 # x Add rule
-# x Modify rule or word
-# x Delete rule or word
+# x Modify rule or word - UNTESTED
+# x Delete rule or word - UNTESTED
 # View rule or word - Dependant on GUI
 # List words by english or french - Dependant on GUI
 # List rules - Dependant on GUI
@@ -611,16 +613,86 @@ def deleteObject(curs, db, obj):
         print("Error: Failed to delete object!")
         return False
     return None
+
+def openingDialogueScreen():
+    # Default vars:
+    dbIP = "192.168.0.94"
+    dbUser = "client"
+    dbPass = "password"
+    db = "frh"
+
+    openingDialogue = Tk()
+    title = Label(openingDialogue, text="WELCOME", font=("Helvetica", 44))
+
+    frame = LabelFrame(openingDialogue, text="Connection Details:", font=("Helvetica"))
+
+    ipEntryText = Label(frame, text="Server IP")
+    dbIPStrVar = StringVar(frame, value=dbIP)
+    ipEntry = Entry(frame, font=("Helvetica"), textvariable=dbIPStrVar)
+
+    userEntryText = Label(frame, text="Server User")
+    dbUserStrVar = StringVar(frame, value=dbUser)
+    userEntry = Entry(frame, font=("Helvetica"), textvariable=dbUserStrVar)
+
+    passEntryText = Label(frame, text="Server Password")
+    dbPassStrVar = StringVar(frame, value=dbPass)
+    passEntry = Entry(frame, font=("Helvetica"), textvariable=dbPassStrVar)
+
+    dbEntryText = Label(frame, text="Database")
+    dbStrVar = StringVar(frame, value=db)
+    dbEntry = Entry(frame, font=("Helvetica"), textvariable=dbStrVar)
+
+    # Geometry/layout
+    ipEntryText.grid(column=0, row=1)
+    ipEntry.grid(column=1, row=1)
+
+    userEntryText.grid(column=0, row=2)
+    userEntry.grid(column=1, row=2)
+
+    passEntryText.grid(column=0, row=3)
+    passEntry.grid(column=1, row=3)
+
+    dbEntryText.grid(column=0, row=4)
+    dbEntry.grid(column=1, row=4)
+
+    toReturn = []
+    def openingDialogueGoButton():
+        toReturn.append(ipEntry.get())
+        toReturn.append(userEntry.get())
+        toReturn.append(passEntry.get())
+        toReturn.append(dbEntry.get())
+        openingDialogue.destroy()
+
+    go = Button(frame, text="Go!", command=openingDialogueGoButton)
+    go.grid(column=1, row=5)
+
+    title.grid(column=0, row=0, columnspan=2)
+    frame.grid(column=0, row=1, columnspan=3)
+
+    openingDialogue.mainloop()
+    return toReturn
+
+def errorInvalidLogin():
+    messagebox.showerror("ERROR", "Invalid login details!")
+    return None
 # Main script
 
 # SQL Server Connection
-# Vars
-dbIP = "192.168.0.94"
-dbUser = "client"
-dbPass = "password"
-db = "frh"
 
-database = MySQLdb.connect(dbIP, dbUser, dbPass, db)
+serverVars = []
+
+# Call function to open dialogue to get server values from user
+# SQL Server Connection
+serverVars = openingDialogueScreen()
+
+try:
+    database = MySQLdb.connect(serverVars[0], serverVars[1], serverVars[2], serverVars[3])
+except:
+    # Failed! Check connection details
+    print("Error: Incorrect login details! Restart application!")
+    errorInvalidLogin()
+    quit()
+
 cursor = database.cursor()
 cursor.execute("SELECT VERSION()") # Verify connection
 databaseVersion = cursor.fetchone()
@@ -643,9 +715,13 @@ for word in wordList:
         miscWordList.append(word)
     elif word.__class__.__name__ == "Verb":
         verbList.append(word)
-    print(word.englishDef) # Testing purposes
+    #print(word.englishDef) # Testing purposes
 # Defined all word lists
 ruleList = initRuleList(cursor)
+
+top = Tk()
+top.title("Hello Wordl!")
 # Init Done
 
+top.mainloop()
 database.close()
