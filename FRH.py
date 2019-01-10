@@ -68,6 +68,24 @@ from Classes import *
 # Others when I think of them
 
 # Functions
+def evalGender(gen):
+    "Translates a gender class into a gender character identifier"
+    if gen.__class__.__name__ == "Masculine":
+        return "m"
+    else:
+        return "f"
+
+def evalType(type):
+    "Translates a type class into a type id"
+    if type.__class__.__name__ == "ERVerb":
+        return "0"
+    if type.__class__.__name__ == "REVerb":
+        return "1"
+    if type.__class__.__name__ == "IRVerb":
+        return "2"
+    else:
+        return "3"
+
 def initWordList(curs):
     'Returns a list of all words from the database'
     # Returning a list of all words
@@ -298,14 +316,14 @@ def addRule(curs, rule, db):
 def modifyRule(curs, db, rule, newRule):
     queryStem = "UPDATE rule SET "
     if rule.example != newRule.example:
-        newQuery = queryStem + "example = " + newRule.example + " WHERE NAME = " + rule.name
+        newQuery = queryStem + "example = '" + newRule.example + "' WHERE NAME = '" + rule.name + "'"
         try:
             curs.execute(newQuery)
             db.commit()
         except:
             db.rollback()
     if rule.description != newRule.description:
-        newQuery = queryStem + "description = " + newRule.description + " WHERE NAME = " + rule.name
+        newQuery = queryStem + "description = '" + newRule.description + "' WHERE NAME = '" + rule.name + "'"
         try:
             curs.execute(newQuery)
             db.commit()
@@ -314,6 +332,270 @@ def modifyRule(curs, db, rule, newRule):
             db.rollback()
             print("Error: Unable to modify rule")
     return None
+
+def modifyWord(curs, db, word, newWord):
+    "Modifies the SQL DB of a word given the original word object and a new word object"
+    # Issues with this function:
+    # INCREDIBLY slow compared to simply deleting and recreating the SQL Table entry for any modification in object greater than 1 change
+    # Particularly in the Verb set if you are modifying an entire object
+    # Could result in up to 23 SQL Update queries which could theoretically be reduced to 2
+    # Also no check on out of range errors in the conjugation lists
+    # Would probably be good to have another function that just calls the delete then create functions for large modify operations
+    if word.__class__.__name__ == "Adjective":
+        queryStem = "UPDATE adjective SET "
+        if word.frenchDef != newWord.frenchDef:
+            query = queryStem + "french = '" + newWord.frenchDef + "' WHERE english = '" + word.englishDef  + "'"
+            try:
+                curs.execute(query)
+                db.commit()
+            except:
+                db.rollback()
+        if word.plural != newWord.plural:
+            query = queryStem + "plural = '" + newWord.plural + "' WHERE english = '" + word.englishDef + "'"
+            try:
+                curs.execute(query)
+                db.commit()
+            except:
+                db.rollback()
+        if word.feminine != newWord.feminine:
+            query = queryStem + "feminine = '" + newWord.feminine + "' WHERE english = '" + word.englishDef + "'"
+            try:
+                curs.execute(query)
+                db.commit()
+            except:
+                db.rollback()
+        if word.commnetText != newWord.commentText:
+            query = queryStem + "comment = '" + newWord.commentText + "' WHERE english = '" + word.englishDef + "'"
+            try:
+                curs.execute(query)
+                db.commit()
+            except:
+                db.rollback()
+        return None
+    if word.__class__.__name__ == "Noun":
+        queryStem = "UPDATE noun SET "
+        if word.frenchDef != newWord.frenchDef:
+            query = queryStem + "french = '" + newWord.frenchDef + "' WHERE english = '" + word.englishDef  + "'"
+            try:
+                curs.execute(query)
+                db.commit()
+            except:
+                db.rollback()
+        if word.plural != newWord.plural:
+            query = queryStem + "plural = '" + newWord.plural + "' WHERE english = '" + word.englishDef + "'"
+            try:
+                curs.execute(query)
+                db.commit()
+            except:
+                db.rollback()
+        if word.gender != newWord.gender:
+            gender = evalGender(newWord.gender)
+            query = queryStem + "gender = '" + gender + "' WHERE english = '" + word.englishDef + "'"
+            try:
+                curs.execute(query)
+                db.commit()
+            except:
+                db.rollback()
+        if word.commnetText != newWord.commentText:
+            query = queryStem + "comment = '" + newWord.commentText + "' WHERE english = '" + word.englishDef + "'"
+            try:
+                curs.execute(query)
+                db.commit()
+            except:
+                db.rollback()
+        return None
+    if word.__class__.__name__ == "Verb":
+        # PAIN
+        if word.frenchDef != newWord.frenchDef:
+            query = queryStem + "french = '" + newWord.frenchDef + "' WHERE english = '" + word.englishDef  + "'"
+            try:
+                curs.execute(query)
+                db.commit()
+            except:
+                db.rollback()
+        if word.type != newWord.type:
+            type = evalType(newWord.type)
+            query = queryStem + "type = '" + type + "' WHERE english = '" + word.englishDef  + "'"
+            try:
+                curs.execute(query)
+                db.commit()
+            except:
+                db.rollback()
+        if word.reflexive != newWord.reflexive:
+            if newWord.reflexive:
+                refl = "y"
+            else:
+                refl = "n"
+            query = queryStem + "reflexive = '" + refl + "' WHERE english = '" + word.englishDef  + "'"
+            try:
+                curs.execute(query)
+                db.commit()
+            except:
+                db.rollback()
+        if word.pastParticiple != newWord.pastParticiple:
+            query = queryStem + "past_participle = '" + newWord.pastParticiple + "' WHERE english = '" + word.englishDef  + "'"
+            try:
+                curs.execute(query)
+                db.commit()
+            except:
+                db.rollback()
+        if word.presentConjugation[0] != newWord.presentConjugation[0]:
+            query = queryStem + "je_pres_conj = '" + newWord.presentConjugation[0] + "' WHERE english = '" + word.englishDef  + "'"
+            try:
+                curs.execute(query)
+                db.commit()
+            except:
+                db.rollback()
+        if word.presentConjugation[1] != newWord.presentConjugation[1]:
+            query = queryStem + "tu_pres_conj = '" + newWord.presentConjugation[1] + "' WHERE english = '" + word.englishDef  + "'"
+            try:
+                curs.execute(query)
+                db.commit()
+            except:
+                db.rollback()
+        if word.presentConjugation[2] != newWord.presentConjugation[2]:
+            query = queryStem + "on_pres_conj = '" + newWord.presentConjugation[2] + "' WHERE english = '" + word.englishDef  + "'"
+            try:
+                curs.execute(query)
+                db.commit()
+            except:
+                db.rollback()
+        if word.presentConjugation[3] != newWord.presentConjugation[3]:
+            query = queryStem + "nous_pres_conj = '" + newWord.presentConjugation[3] + "' WHERE english = '" + word.englishDef  + "'"
+            try:
+                curs.execute(query)
+                db.commit()
+            except:
+                db.rollback()
+        if word.presentConjugation[4] != newWord.presentConjugation[4]:
+            query = queryStem + "vous_pres_conj = '" + newWord.presentConjugation[4] + "' WHERE english = '" + word.englishDef  + "'"
+            try:
+                curs.execute(query)
+                db.commit()
+            except:
+                db.rollback()
+        if word.presentConjugation[5] != newWord.presentConjugation[5]:
+            query = queryStem + "ils_pres_conj = '" + newWord.presentConjugation[5] + "' WHERE english = '" + word.englishDef  + "'"
+            try:
+                curs.execute(query)
+                db.commit()
+            except:
+                db.rollback()
+        if word.imparfaitConjugation[0] != newWord.imparfaitConjugation[0]:
+            query = queryStem + "je_imp_conj = '" + newWord.imparfaitConjugation[0] + "' WHERE english = '" + word.englishDef  + "'"
+            try:
+                curs.execute(query)
+                db.commit()
+            except:
+                db.rollback()
+        if word.imparfaitConjugation[1] != newWord.imparfaitConjugation[1]:
+            query = queryStem + "tu_imp_conj = '" + newWord.imparfaitConjugation[1] + "' WHERE english = '" + word.englishDef  + "'"
+            try:
+                curs.execute(query)
+                db.commit()
+            except:
+                db.rollback()
+        if word.imparfaitConjugation[2] != newWord.imparfaitConjugation[2]:
+            query = queryStem + "on_imp_conj = '" + newWord.imparfaitConjugation[2] + "' WHERE english = '" + word.englishDef  + "'"
+            try:
+                curs.execute(query)
+                db.commit()
+            except:
+                db.rollback()
+        if word.imparfaitConjugation[3] != newWord.imparfaitConjugation[3]:
+            query = queryStem + "nous_imp_conj = '" + newWord.imparfaitConjugation[3] + "' WHERE english = '" + word.englishDef  + "'"
+            try:
+                curs.execute(query)
+                db.commit()
+            except:
+                db.rollback()
+        if word.imparfaitConjugation[4] != newWord.imparfaitConjugation[4]:
+            query = queryStem + "vous_imp_conj = '" + newWord.imparfaitConjugation[4] + "' WHERE english = '" + word.englishDef  + "'"
+            try:
+                curs.execute(query)
+                db.commit()
+            except:
+                db.rollback()
+        if word.imparfaitConjugation[5] != newWord.imparfaitConjugation[5]:
+            query = queryStem + "ils_imp_conj = '" + newWord.imparfaitConjugation[5] + "' WHERE english = '" + word.englishDef  + "'"
+            try:
+                curs.execute(query)
+                db.commit()
+            except:
+                db.rollback()
+        if word.futureSimpleConjugation[0] != newWord.futureSimpleConjugation[0]:
+            query = queryStem + "je_imp_conj = '" + newWord.futureSimpleConjugation[0] + "' WHERE english = '" + word.englishDef  + "'"
+            try:
+                curs.execute(query)
+                db.commit()
+            except:
+                db.rollback()
+        if word.futureSimpleConjugation[1] != newWord.futureSimpleConjugation[1]:
+            query = queryStem + "tu_imp_conj = '" + newWord.futureSimpleConjugation[1] + "' WHERE english = '" + word.englishDef  + "'"
+            try:
+                curs.execute(query)
+                db.commit()
+            except:
+                db.rollback()
+        if word.futureSimpleConjugation[2] != newWord.futureSimpleConjugation[2]:
+            query = queryStem + "on_imp_conj = '" + newWord.futureSimpleConjugation[2] + "' WHERE english = '" + word.englishDef  + "'"
+            try:
+                curs.execute(query)
+                db.commit()
+            except:
+                db.rollback()
+        if word.futureSimpleConjugation[3] != newWord.futureSimpleConjugation[3]:
+            query = queryStem + "nous_imp_conj = '" + newWord.futureSimpleConjugation[3] + "' WHERE english = '" + word.englishDef  + "'"
+            try:
+                curs.execute(query)
+                db.commit()
+            except:
+                db.rollback()
+        if word.futureSimpleConjugation[4] != newWord.futureSimpleConjugation[4]:
+            query = queryStem + "vous_imp_conj = '" + newWord.futureSimpleConjugation[4] + "' WHERE english = '" + word.englishDef  + "'"
+            try:
+                curs.execute(query)
+                db.commit()
+            except:
+                db.rollback()
+        if word.futureSimpleConjugation[5] != newWord.futureSimpleConjugation[5]:
+            query = queryStem + "ils_imp_conj = '" + newWord.futureSimpleConjugation[5] + "' WHERE english = '" + word.englishDef  + "'"
+            try:
+                curs.execute(query)
+                db.commit()
+            except:
+                db.rollback()
+        if word.usesEtreInPasseCompose != newWord.usesEtreInPasseCompose:
+            if newWord.usesEtreInPasseCompose:
+                etre = "y"
+            else:
+                etre = "n"
+            query = queryStem + "etre = '" + etre + "' WHERE english = '" + word.englishDef  + "'"
+            try:
+                curs.execute(query)
+                db.commit()
+            except:
+                db.rollback()
+            return None
+    if word.__class__.__name__ == "Misc":
+        if word.commnetText != newWord.commentText:
+            query = queryStem + "comment = '" + newWord.commentText + "' WHERE english = '" + word.englishDef + "'"
+            try:
+                curs.execute(query)
+                db.commit()
+            except:
+                db.rollback()
+        if word.frenchDef != newWord.frenchDef:
+            query = queryStem + "french = '" + newWord.frenchDef + "' WHERE english = '" + word.englishDef + "'"
+            try:
+                curs.execute(query)
+                db.commit()
+            except:
+                db.rollback()
+            return None
+    return False
+
+def deleteObject(curs, db, obj):
 # Main script
 
 # SQL Server Connection
