@@ -168,9 +168,11 @@ class Verb (Word):
 
 class Rule:
     'Class for details of grammatical rules and examples'
+    name = ''
     description = ''
     example = ''
 
-    def __init__(self, desc, ex = ''):
+    def __init__(self, n,  desc, ex = ''):
         self.description = desc.lower()
         self.example = ex.lower()
+        self.name = n.lower()

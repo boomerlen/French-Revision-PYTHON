@@ -58,9 +58,9 @@ from Classes import *
 # Functions defined in this file (descriptions):
 # x Initialise word lists (this is where C would've been better but fuck me the GUI (and SQL server con) would be impossible and I don't think the memory issues will be that bad)
 # x Initialise rule lists
-# Add word
-# Add rule
-# Modify rule or word
+# x Add word
+# x Add rule
+# Modify rule (x) or word
 # Delete rule or word
 # View rule or word
 # List words by english or french
@@ -171,16 +171,16 @@ def initRuleList(curs):
     try:
         curs.execute("SELECT * FROM rule")
         rs = curs.fetchall()
-        for row in rs:
-            desc = rs[0]
-            ex = rs[1]
-            rules.append(Rule(desc, ex))
     except:
         print("Error: Unable to fetch rules from server")
+    for row in rs:
+        desc = row[0]
+        ex = row[1]
+        rules.append(Rule(desc, ex))
     return rules
 
-def addWord(curs, word):
-    'Adds a word to the database'
+def addWord(curs, word, db):
+    'Adds a word to the database given the database cursor, the word, and the database object'
     if word.__class__.__name__ == "Adjective":
         if word.gender.__class__.__name__ == "Masculine":
             gender = 'm'
@@ -189,26 +189,32 @@ def addWord(curs, word):
         query = "INSERT INTO adjective (english, french, plural, feminine, comment) VALUES ('" + word.englishDef + "', '" + word.frenchDef + "', '" + word.pluralEnd + "', '" + fem + "', '" + word.commentText + "')"
         try:
             curs.execute(query)
+            database.commit()
         except:
             print("Error: Failed to add word")
+            database.rollback()
             return False
     elif word.__class__.__name__ == "Noun":
         if word.gender.__class__.__name__ == "Masculine":
             gender = 'm'
         else:
             gender = 'f'
-        query = "INSERT INTO noun (english, french, plural, gender, comment) VALUES ('" + word.englishDef + "', '" + word.frenchDef + "', '" + word.pluralEnd + "', '" + gender + "', '" + word.commentText + "')"
+        query = "INSERT INTO noun (english, french, plural, gender, comment) VALUES ('" + word.englishDef + "', '" + word.frenchDef + "', '" + word.plural + "', '" + gender + "', '" + word.commentText + "')"
         try:
             curs.execute(query)
+            database.commit()
         except:
             print("Error: Failed to add word")
+            database.rollback()
             return False
     elif word.__class__.__name__ == "Misc":
-        query = "INSERT INTO misc (english, french, comment) VALUES ('" + word.englishDef + "', '" word.frenchDef + "', '" + word.commentText + "')"
+        query = "INSERT INTO misc (english, french, comment) VALUES ('" + word.englishDef + "', '" + word.frenchDef + "', '" + word.commentText + "')"
         try:
             curs.execute(query)
+            database.commit()
         except:
             print("Error: Failed to add word")
+            database.rollback()
             return False
     elif word.__class__.__name == "Verb":
         # SUICIDE TIME
@@ -229,8 +235,85 @@ def addWord(curs, word):
         else:
             etre = 'n'
         # Huge expression time
-        query = "INSERT INTO verb (english, french, type, reflexive, past_participle, je_pres_conj, tu_pres_conj, on_pres_conj, nous_pres_conj, vous_pres_conj, ils_pres_conj, je_imp_conj, tu_imp_conj, on_imp_conj, nous_imp_conj, vous_imp_conj, ils_imp_conj, je_futur_conj, tu_futur_conj, on_futur_conj, nous_futur_conj, vous_futur_conj, ils_futur_conj, etre) VALUES ('" + # FINISH THIS SHIT LATER CUZ I WANNA DIE ITS LATE FUCK MEEEEEEE
-    return
+        query = "INSERT INTO verb (english, french, type, reflexive, past_participle, je_pres_conj, tu_pres_conj, on_pres_conj, nous_pres_conj, vous_pres_conj, ils_pres_conj, je_imp_conj, tu_imp_conj, on_imp_conj, nous_imp_conj, vous_imp_conj, ils_imp_conj, je_futur_conj, tu_futur_conj, on_futur_conj, nous_futur_conj, vous_futur_conj, ils_futur_conj, etre) VALUES ('"
+        queryCommonText = "', '"
+        queryFinalText = "')"
+        # Gonna make all of the texts to output into a single list to iterate through adding the before and after text to it
+        queryTexts = []
+        queryTexts.append(word.englishDef)
+        queryTexts.append(word.frenchDef)
+        queryTexts.append(str(type))
+        queryTexts.append(word.pastParticiple) # NOTE: Need to increase size of past pasticiple in database as it is WAY too small (error on my part)
+        # Need to do this this way as if the conjugation tables are empty this presents issues
+        i = 0
+        while i < 6:
+            try:
+                var = word.presentConjugation[i]
+            except:
+                var = ''
+            queryTexts.append(var)
+            i = i + 1
+        i = 0
+        while i < 6:
+            try:
+                var = word.imparfaitConjugation[i]
+            except:
+                var = ''
+            queryTexts.append(var)
+            i = i + 1
+        i = 0
+        while i < 6:
+            try:
+                var = word.futureSimpleConjugation[i]
+            except:
+                var = ''
+            queryTexts.append(var)
+        queryTail = ''
+        for x in range(23):
+            queryTail = queryTail + queryTexts[x] + queryCommonText
+        queryTail = queryTail + queryTexts[23] + queryFinalText
+        query = query + queryTail
+        try:
+            curs.execute(query)
+            db.commit()
+        except:
+            db.rollback()
+            print("Error: Failed to add word " + word.englishDef + " to database")
+    return None
+
+def addRule(curs, rule, db):
+    query = "INSERT INTO rule (name, description, example) VALUES ('" + rule.name + "', '"+ rule.description + "', '"
+    if not rule.example:
+        query = query + "')"
+    else:
+        query = query + rule.example + "')"
+    try:
+        curs.execute(query)
+        db.commit()
+    except:
+        db.rollback()
+        print("Error: Failed to add rule to database")
+    return None
+
+def modifyRule(curs, db, rule, newRule):
+    queryStem = "UPDATE rule SET "
+    if rule.example != newRule.example:
+        newQuery = queryStem + "example = " + newRule.example + " WHERE NAME = " + rule.name
+        try:
+            curs.execute(newQuery)
+            db.commit()
+        except:
+            db.rollback()
+    if rule.description != newRule.description:
+        newQuery = queryStem + "description = " + newRule.description + " WHERE NAME = " + rule.name
+        try:
+            curs.execute(newQuery)
+            db.commit()
+            print("Error: Unable to modify rule")
+        except:
+            db.rollback()
+            print("Error: Unable to modify rule")
+    return None
 # Main script
 
 # SQL Server Connection
@@ -263,6 +346,7 @@ for word in wordList:
         miscWordList.append(word)
     elif word.__class__.__name__ == "Verb":
         verbList.append(word)
+    print(word.englishDef) # Testing purposes
 # Defined all word lists
 ruleList = initRuleList(cursor)
 # Init Done
