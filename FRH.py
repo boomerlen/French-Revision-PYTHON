@@ -57,6 +57,7 @@ from GUI import *
 #   (je-ils)_futur_conj | varchar(30) - Conjugation for je-ils in le futur simple
 #   etre | char(1) - either 'y' or 'n'
 # rule -
+#   name | idk
 #   description | varchar(150)
 #   example | varchar(80)
 
