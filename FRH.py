@@ -115,14 +115,12 @@ for word in wordList:
 # Defined all word lists
 ruleList = initRuleList(cursor)
 
-
-
-# Init main window class
-
 # Init Done
 # Call main window class with word variables
 
-# Testing file seperation
+# This file is disintegrating into documentation as all of its functions get replaced by instances of classes in other files
+# This is a good thing, nice and neat
+# One day I'll clean all these comments too!
 
 mainGUICLass = mainGUI(Tk(), verbList, nounList, adjectiveList, miscWordList, ruleList)
 database.close()
