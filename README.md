@@ -5,7 +5,7 @@ List of things that need to happen for this to work:
 2- Some system to communicate with SQL server DONE
 3- Some GUI TODO
 
-Probably will start with the 1st and 3rd because if it's anything like the C project, 2 is gonna b a pain.
+Now all that's left is the GUI which is currently WIP
 
 Dependencies:
 MySQLdb (mysqlclient), tkinter
