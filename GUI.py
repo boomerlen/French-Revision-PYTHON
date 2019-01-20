@@ -131,7 +131,7 @@ class mainGUI:
 
                 newWin2.mainloop()
             elif radioVariable.get() == "verb":
-                # info to fill
+                # info to fill - most complex (ofc)
                 newEng, newFre, newType, newPP = ""
                 newEtre, newReflex = False
                 newPres, newImp, newFutur = []
@@ -143,12 +143,41 @@ class mainGUI:
                     presentConjugationFrame.grid(row=0, column=0, columspan=2, rowspan=6)
                     imparfaitConjugationFrame.grid(row=0, column=2, columspan=2, rowspan=6)
                     futurConjugationFrame.grid(row=6, column=0, columnspan=5, rowspan=3)
-                    #
-
+                    # use the lists with a loop to populate the remaining stuff
+                    for i in range(6):
+                        presLabels[i].grid(row=i, column=0)
+                        presEntries[i].grid(row=i, column=1)
+                    for i in range(6):
+                        impLabels[i].grid(row=i, column=0)
+                        impEntries[i].grid(row=i, column=1)
+                    for i in range(6):
+                        if i % 2 == 0:
+                            labelCol = 1
+                        else:
+                            labelCol = 3
+                        futurLabels[i].grid(row=(i/2-(i%2)/2), column=labelCol)
+                        futurEntries[i].grid(row=(i/2-(i%2)/2), column=(labelCol+1)) # Complicated maths
+                    # Gotta render the less button!
+                    moreButton.grid_forget()
+                    lessButton.grid(row=19, column=1) # See if Row is correct when testing! (trial and error)
+                    goButton.grid(row=19, column=3)
                 def lessButtonCallback():
-                    pass
+                    moreButtonFrame.grid_forget()
+                    lessButton.grid_forget()
+                    goButton.grid(row=3, column=3)
+                    moreButton.grid(row=3, column=1)
                 def nextButtonPressed():
-                    pass # Fill everything then call the database access function to add it to DB
+                    # Fill everything then call the database access function to add it to DB
+                    # This will be fun
+                    # Ordinary values
+                    newEng = englishEntry.get()
+                    newFre = frenchEntry.get()
+                    newType = typeSpinboxEntry.get() # might not work
+                    newPP = ppEntry.get()
+                    # Harder
+                    if reflexiveSpinboxEntry.get() == "Yes":
+                        newReflex = True
+                    
 
                 # Widget setup
                 title = Label(newWin2, text="Verb", font=("Helvetica"))
@@ -168,18 +197,13 @@ class mainGUI:
 
                 moreButton = Button(newWin2, text="More...", font=("Helvetica"), command=moreButtonCallback)
                 lessButton = Button(newWin2, text="Less...", font=("Helvetica"), command=lessButtonCallback)
-                # All the stuff that the more button activates. It just calls the grid method on the frame
-                # Upon reflection, this could all be a loop. but fuck it we're here now may as well follow through
-                # If I ever needed to reduce the size of this file or optimise for some reason:
-                # Make a list to store all these then a list to store "je, tu, on" etc
-                # Have some loop that sticks makes as many widgets as we need with those subjects and sticks them in the other list
-                # That would probably take like 10 lines so we'd save a bit of space probably
-                # Probably make setting the grid up a bit easier too
-                # Hell it would make everything easier but I've invested too much time now to change it for no reason
-                # Frames 
+                # All the stuff that the more button activates. It just calls the grid method on the frame and then the respective members of the list
+                # Frames
                 presentConjugationFrame = Frame(moreButtonFrame, text="Present Conjugation", font=("Helvetica"))
+                imparfaitConjugationFrame = Frame(moreButtonFrame, text="Imparfait Conjugation", font=("Helvetica"))
+                futurConjugationFrame = Frame(moreButtonFrame, text="Future Simple Conjugation", font=("Helvetica"))
 
-                # Gonna try just making a loop and list for this cuz bloody hell
+                # lists comprising the conjugation table for setting up the labels and entries
                 presLabels, presEntries, impLabels, impEntries, futurLabels, futurEntries = []
                 subjects = ["je:", "tu:", "on:", "nous:", "vous:", "ils:"]
 
@@ -194,7 +218,7 @@ class mainGUI:
                     futurLabels.append(Label(futurConjugationFrame, text=subjects[i], font=("Helvetica")))
                     futurEntries.append(Entry(futurConjugationFrame, font=("Helvetica")))
                 # That did seriously take about a 10th as long
-
+                # Removing the original work I did (in like an hour )
                 moreButtonFrame = Frame(newWin2, text="More", font=("Helvetica"))
 
                 usesEtreLabel = Label(moreButtonFrame, text="Uses Etre in Passe Compose:", font=("Helvetica"))
@@ -202,65 +226,6 @@ class mainGUI:
 
                 ppEntryLabel = Label(moreButtonFrame, text="Past Participle:", font=("Helvetica"))
                 ppEntry = Entry(moreButtonFrame, font=("Helvetica"))
-
-
-                presentJeEntryLabel = Label(presentConjugationFrame, text="Je:", font=("Helvetica"))
-                presentJeEntry = Entry(presentConjugationFrame, font=("Helvetica"))
-
-                presentTuEntryLabel = Label(presentConjugationFrame, text="Tu:", font=("Helvetica"))
-                presentTuEntry = Entry(presentConjugationFrame, font=("Helvetica"))
-
-                presentOnEntryLabel = Label(presentConjugationFrame, text="On:", font=("Helvetica"))
-                presentOnEntry = Entry(presentConjugationFrame, font=("Helvetica"))
-
-                presentNousEntryLabel = Label(presentConjugationFrame, text="Nous:", font=("Helvetica"))
-                presentNousEntry = Entry(presentConjugationFrame, font=("Helvetica"))
-
-                presentVousEntryLabel = Label(presentConjugationFrame, text="Vous:", font=("Helvetica"))
-                presentVousEntry = Entry(presentConjugationFrame, font=("Helvetica"))
-
-                presentIlsEntryLabel = Label(presentConjugationFrame, text="Ils:", font=("Helvetica"))
-                presentIlsEntry = Entry(presentConjugationFrame, font=("Helvetica"))
-
-                imparfaitConjugationFrame = Frame(moreButtonFrame, text="Imparfait Conjugation", font=("Helvetica"))
-
-                imparfaitJeEntryLabel = Label(imparfaitConjugationFrame, text="Je:", font=("Helvetica"))
-                imparfaitJeEntry = Entry(imparfaitConjugationFrame, font=("Helvetica"))
-
-                imparfaitTuEntryLabel = Label(imparfaitConjugationFrame, text="Tu:", font=("Helvetica"))
-                imparfaitTuEntry = Entry(imparfaitConjugationFrame, font=("Helvetica"))
-
-                imparfaitOnEntryLabel = Label(imparfaitConjugationFrame, text="On:", font=("Helvetica"))
-                imparfaitOnEntry = Entry(imparfaitConjugationFrame, font=("Helvetica"))
-
-                imparfaitNousEntryLabel = Label(imparfaitConjugatioNFrame, text="Nous:", font=("Helvetica"))
-                imparfaitNousEntry = Entry(imparfaitConjugationFrame, font=("Helvetica"))
-
-                imparfaitVousEntryLabel = Label(imparfaitConjugationFrame, text="Vous:", font=("Helvetica"))
-                imparfaitVousEntry = Entry(imparfaitConjugationFrame, font=("Helvetica"))
-
-                imparfaitIlsEntryLabel = Label(imparfaitConjguationFrame, text="Ils:", font=("Helvetica"))
-                imparfaitIlsEntry = Entry(imparfaitConjugationFrame, font=("Helvetica"))
-
-                futurConjugationFrame = Frame(moreButtonFrame, text="Future Simple Conjugation", font=("Helvetica"))
-
-                futurJeEntryLabel = Label(futurConjugationFrame, font=("Helvetica"), text="Je:")
-                futurJeEntry = Entry(futurConjugationFrame, font=("Helvetica"))
-
-                futurTuEntryLabel = Label(futurConjugationFrame, font=("Helvetica"), text="Tu:")
-                futurTuEntry = Entry(futurConjugationFrame, font=("Helvetica"))
-
-                futurOnEntryLabel = Label(futurConjugationFrame, font=("Helvetica"), text="On:")
-                futurOnEntry = Entry(futurConjugationFrame, font=("Helvetica"))
-
-                futurNousEntryLabel = Label(futurConjugationFrame, font=("Helvetica"), text="Nous:")
-                futurNousEntry = Entry(futurConjugationFrame, font=("Helvetica"))
-
-                futurVousEntryLabel = Label(futurConjugationFrame, font=("Helvetica"), text="Vous:")
-                futurVousEntry = Entry(futurConjugationFrame, font=("Helvetica"))
-
-                futurIlsEntryLabel = Label(futurConjugationFrame, font=("Helvetica"), text="Ils:")
-                futurIlsEntry = Entry(futurConjugationFrame, font=("Helvetica"))
 
                 goButton = Button(newWin2, text="Next", command=nextButtonPressed)
 
