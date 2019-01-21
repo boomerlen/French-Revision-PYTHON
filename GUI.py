@@ -100,6 +100,9 @@ class mainGUI:
                     newEx = exampleEntry.get()
                     self.ruleList.append(Rule(newName, newDesc, newEx))
                     # addRule(curs, Rule(newName, newDesc, newEx), db)
+                    messagebox.showinfo("Done!", "Created rule " + newName + "!")
+                    newWin2.destroy()
+                    return
                 # Window for creating rule
                 title = Label(newWin2, text="New Rule", font=("Helvetica", 24))
 
@@ -135,6 +138,11 @@ class mainGUI:
                 newEng, newFre, newType, newPP = ""
                 newEtre, newReflex = False
                 newPres, newImp, newFutur = []
+                # populate the lists with default values so we don't get issues
+                for i in ragne(6):
+                    newPres.apppend("")
+                    newImp.append("")
+                    newFutur.append("")
                 # There's a lot
 
                 # Relevant functions
@@ -144,7 +152,7 @@ class mainGUI:
                     imparfaitConjugationFrame.grid(row=0, column=2, columspan=2, rowspan=6)
                     futurConjugationFrame.grid(row=6, column=0, columnspan=5, rowspan=3)
                     # use the lists with a loop to populate the remaining stuff
-                    for i in range(6):
+                    for i in range(6): # could compress into one loop if desired
                         presLabels[i].grid(row=i, column=0)
                         presEntries[i].grid(row=i, column=1)
                     for i in range(6):
@@ -174,10 +182,37 @@ class mainGUI:
                     newFre = frenchEntry.get()
                     newType = typeSpinboxEntry.get() # might not work
                     newPP = ppEntry.get()
+                    if newType == "ER Verb":
+                        actualType = ERVerb()
+                    elif newType == "RE Verb":
+                        actualType = REVerb()
+                    elif newType == "IRVerb":
+                        actualType = IRVerb()
+                    else:
+                        actualType = IrregularVerb()
                     # Harder
                     if reflexiveSpinboxEntry.get() == "Yes":
                         newReflex = True
-                    
+                    if usesEtreSpinbox.get() == "Yes":
+                        newEtre = True
+                    # Those lists
+                    for i in range(6):
+                        newPres[i] = presEntries[i].get()
+                        newImp[i] = impEntries[i].get()
+                        newFutur[i] = futurEntires[i].get()
+                    # All done
+                    newVerb = Verb(newEng, newFre, actualType, newReflex)
+                    newVerb.pastParticiple = newPP
+                    newVerb.presentConjugation = newPres
+                    newVerb.imparfaitConjugation = newImp
+                    newVerb.futureSimpleConjugation = newFutur
+                    newVerb.usesEtreInPasseCompose = newEtre
+                    self.verbList.append(newVerb)
+                    # call the shit to add the verb to the db passing newVerb
+                    messagebox.showinfo("Done!", "Created verb " + newFre + "!")
+                    newWin2.destroy()
+                    return
+
 
                 # Widget setup
                 title = Label(newWin2, text="Verb", font=("Helvetica"))
