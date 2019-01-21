@@ -90,9 +90,11 @@ class mainGUI:
             newWin.destroy()
             newWin2 = Tk()
 
-            if radioVariable.get() == "rule":
+            if True: # radioVariable.get() == "rule": # Testing purposes
                 # Info to fill
-                newName, newDesc, newEx = ""
+                newName = ""
+                newDesc = ""
+                newEx = ""
                 # Function for button handler
                 def nextButtonPressed():
                     newName = nameEntry.get()
@@ -117,7 +119,7 @@ class mainGUI:
 
                 exampleEntryLabel = Label(newWin2, text="Example:", font=("Helvetica"))
                 exampleScrollbar = Scrollbar(newWin2)
-                exampleEntry = Entry(newWin2, font=("Helvetica"), xscrollcommand=exampleScrollbar.set)
+                exampleEntry = Entry(newWin2, font=("Helvetica"), xscrollcommand=exampleScrollbar.set) # Scrollbar doesn't work
                 exampleScrollbar.config(command=exampleEntry.xview)
 
                 nextButton = Button(newWin2, command=nextButtonPressed, text="Next", font=("Helvetica"))
@@ -129,7 +131,7 @@ class mainGUI:
                 descriptionEntryLabel.grid(row=2, column=0)
                 descriptionEntry.grid(row=2, column=1, columnspan=3, rowspan=2)
                 exampleEntryLabel.grid(row=4, column=0)
-                exampleEntry.grid(row=4, column=1, columnspan=3, rowspan=2)
+                exampleEntry.grid(row=4, column=1, columnspan=3, rowspan=2) # Formatting is off
                 nextButton.grid(row=5, column=1, columnspan=2)
 
                 newWin2.mainloop()
