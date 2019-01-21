@@ -84,13 +84,15 @@ class mainGUI:
     ruleList = []
 
     def newWord(self):
+        # NOTE: Forgot about comment text for all words except misc
+        # if there is demand, properly implement it.
         newWin = Tk()
         # newWord2
         def newWord2():
             newWin.destroy()
             newWin2 = Tk()
 
-            if True: # radioVariable.get() == "rule": # Testing purposes
+            if radioVariable.get() == "rule": # Testing purposes
                 # Info to fill
                 newName = ""
                 newDesc = ""
@@ -135,14 +137,20 @@ class mainGUI:
                 nextButton.grid(row=5, column=1, columnspan=2)
 
                 newWin2.mainloop()
-            elif radioVariable.get() == "verb":
+            elif radioVariable.get() == "verb": # Testing Purposes
                 # info to fill - most complex (ofc)
-                newEng, newFre, newType, newPP = ""
-                newEtre, newReflex = False
-                newPres, newImp, newFutur = []
+                newEng = "" # Apparently had to unpack this. Apparently doesn't work like it does in c/c++
+                newFre = ""
+                newType = ""
+                newPP = ""
+                newReflex = False
+                newEtre = False
+                newFutur = []
+                newPres = []
+                newImp = []
                 # populate the lists with default values so we don't get issues
-                for i in ragne(6):
-                    newPres.apppend("")
+                for i in range(6):
+                    newPres.append("")
                     newImp.append("")
                     newFutur.append("")
                 # There's a lot
@@ -150,8 +158,8 @@ class mainGUI:
                 # Relevant functions
                 def moreButtonCallback():
                     moreButtonFrame.grid(row=3, column=0, columnspan=5, rowspan=10)
-                    presentConjugationFrame.grid(row=0, column=0, columspan=2, rowspan=6)
-                    imparfaitConjugationFrame.grid(row=0, column=2, columspan=2, rowspan=6)
+                    presentConjugationFrame.grid(row=0, column=0, columnspan=2, rowspan=6)
+                    imparfaitConjugationFrame.grid(row=0, column=2, columnspan=2, rowspan=6)
                     futurConjugationFrame.grid(row=6, column=0, columnspan=5, rowspan=3)
                     # use the lists with a loop to populate the remaining stuff
                     for i in range(6): # could compress into one loop if desired
@@ -168,7 +176,7 @@ class mainGUI:
                         futurLabels[i].grid(row=(i/2-(i%2)/2), column=labelCol)
                         futurEntries[i].grid(row=(i/2-(i%2)/2), column=(labelCol+1)) # Complicated maths
                     # Gotta render the less button!
-                    moreButton.grid_forget()
+                    moreButton.grid_forget() # This didn't seem to work
                     lessButton.grid(row=19, column=1) # See if Row is correct when testing! (trial and error)
                     goButton.grid(row=19, column=3)
                 def lessButtonCallback():
@@ -219,6 +227,9 @@ class mainGUI:
                 # Widget setup
                 title = Label(newWin2, text="Verb", font=("Helvetica"))
 
+                # Frame
+                moreButtonFrame = LabelFrame(newWin2, text="More", font=("Helvetica"))
+
                 # Gonna have inputs outside then a button saying more which expands all the conjugations so that they don't clog up the screen if they won't be set immediately
                 englishEntryLabel = Label(newWin2, text="English:", font=("Helvetica"))
                 englishEntry = Entry(newWin2, font=("Helvetica"))
@@ -236,12 +247,18 @@ class mainGUI:
                 lessButton = Button(newWin2, text="Less...", font=("Helvetica"), command=lessButtonCallback)
                 # All the stuff that the more button activates. It just calls the grid method on the frame and then the respective members of the list
                 # Frames
-                presentConjugationFrame = Frame(moreButtonFrame, text="Present Conjugation", font=("Helvetica"))
-                imparfaitConjugationFrame = Frame(moreButtonFrame, text="Imparfait Conjugation", font=("Helvetica"))
-                futurConjugationFrame = Frame(moreButtonFrame, text="Future Simple Conjugation", font=("Helvetica"))
+                presentConjugationFrame = LabelFrame(moreButtonFrame, text="Present Conjugation", font=("Helvetica"))
+                imparfaitConjugationFrame = LabelFrame(moreButtonFrame, text="Imparfait Conjugation", font=("Helvetica"))
+                futurConjugationFrame = LabelFrame(moreButtonFrame, text="Future Simple Conjugation", font=("Helvetica"))
 
                 # lists comprising the conjugation table for setting up the labels and entries
-                presLabels, presEntries, impLabels, impEntries, futurLabels, futurEntries = []
+                futurEntries = []
+                presLabels = []
+                presEntries = []
+                impLabels = []
+                impEntries = []
+                futurLabels = []
+
                 subjects = ["je:", "tu:", "on:", "nous:", "vous:", "ils:"]
 
                 # Logic: have to do 3 seperate loops because of different frames. May as well seperate out lists too for convenience
@@ -249,14 +266,13 @@ class mainGUI:
                     presLabels.append(Label(presentConjugationFrame, text=subjects[i], font=("Helvetica")))
                     presEntries.append(Entry(presentConjugationFrame, font=("Helvetica")))
                 for i in range(6):
-                    impLabels.append(Label(impConjugationFrame, text=subjects[i], font=("Helvetica")))
-                    impEntries.append(Entry(impConjugationFrame, font=("Helvetica")))
+                    impLabels.append(Label(imparfaitConjugationFrame, text=subjects[i], font=("Helvetica")))
+                    impEntries.append(Entry(imparfaitConjugationFrame, font=("Helvetica")))
                 for i in range(6):
                     futurLabels.append(Label(futurConjugationFrame, text=subjects[i], font=("Helvetica")))
                     futurEntries.append(Entry(futurConjugationFrame, font=("Helvetica")))
                 # That did seriously take about a 10th as long
                 # Removing the original work I did (in like an hour )
-                moreButtonFrame = Frame(newWin2, text="More", font=("Helvetica"))
 
                 usesEtreLabel = Label(moreButtonFrame, text="Uses Etre in Passe Compose:", font=("Helvetica"))
                 usesEtreSpinbox = Spinbox(moreButtonFrame, values=["Yes", "No"])
@@ -280,12 +296,142 @@ class mainGUI:
                 goButton.grid(row=3, column=3)
                 # Note not rending all the conjugations cuz they go under "more..."
             elif radioVariable.get() == "noun":
-                pass
-            elif radioVariable.get() == "adjective":
-                pass
-            else:
-                pass
+                # this is becoming rather aids
 
+                # Start with all the widgets (ah duh)
+                # Not too many fields to fill luckily
+                newEng = ""
+                newFre = ""
+                newPlural = ""
+                newGen = ""
+
+                # callback function
+                def GoButtonCallback():
+                    newEng = engEntry.get()
+                    newFre = freEntry.get()
+                    newPlural = pluralEntry.get()
+                    newGen = genderEntry.get()
+                    if newGen == "Masculine":
+                        gender = Masculine()
+                    else:
+                        gender = Feminine()
+                    self.nounList.append(Noun(newEng, newFre, newPlural, gender))
+                    # whatever function I figure out I'm using for the DB
+                    newWin2.quit()
+                    messagebox.showinfo("Done!", "Added noun " + newFre + "!")
+                    return
+                # Wdigets
+                title = Label(newWin2, text="Noun", font=("Helvetica"))
+
+                engEntryLabel = Label(newWin2, text="English:", font=("Helvetica"))
+                engEntry = Entry(newWin2, font=("Helvetica"))
+
+                freEntryLabel = Label(newWin2, text="French:", font=("Helvetica"))
+                freEntry = Entry(newWin2, font=("Helvetica"))
+
+                pluralEntryLabel = Label(newWin2, text="Plural Ending:", font=("Helvetica"))
+                pluralEntry = Entry(newWin2, font=("Helvetica"))
+
+                genderEntryLabel = Label(newWin2, text="Gender:", font=("Helvetica"))
+                pluralEntry = Spinbox(newWin2, values=["Masculine", "Feminine"])
+
+                goButton = Button(newWin2, text="Next", command=GoButtonCallback)
+
+                # Geometry
+                title.grid(row=0, column=0, columnspan=2)
+                engEntryLabel.grid(row=1, column=0)
+                engEntry.grid(row=1, column=1)
+                freEntryLabel.grid(row=2, column=0)
+                freEntry.grid(row=2, column=1)
+                pluralEntryLabel.grid(row=3, column=0)
+                pluralEntry.grid(row=3, column=1)
+                genderEntryLabel.grid(row=4, column=0)
+                genderEntry.grid(row=4, column=1)
+                goButton.grid(row=5, column=0, columnspan=2)
+
+            elif radioVariable.get() == "adjective":
+                # Usual shit
+                newEng = ""
+                newFre = ""
+                newPluralEnd = ""
+                newFemEnd = ""
+
+                # button callback
+                def goButtonCallback():
+                    newEng = engEntry.get()
+                    newFre = freEntry.get()
+                    newPluralEnd = pluralEntry.get()
+                    newFemEnd = femEntry.get()
+                    self.adjectiveList.append(Adjective(newEng, newFre, newPluralEnd, newFemEnd))
+                    # Code to add it to DB
+                    messagebox.showinfo("Done!", "Added adjective " + newFre + "!")
+                    newWin2.quit()
+                    return
+                # Widgets
+                title = Label(newWin2, text="Adjective", font=("Helvetica"))
+
+                engEntryLabel = Label(newWin2, text="English:", font=("Helvetica"))
+                engEntry = Entry(newWin2, font=("Helvetica"))
+
+                freEntryLabel = Label(newWin2, text="French:", font=("Helvetica"))
+                freEntry = Entry(newWin2, font=("Helvetica"))
+
+                pluralEntryLabel = Label(newWin2, text="Plural Ending:", font=("Helvetica"))
+                pluralEntry = Entry(newWin2, font=("Helvetica"))
+
+                femEntryLabel = Label(newWin2, text="Feminine Ending:", font=("Helvetica"))
+                femEntry = Entry(newWin2, font=("Helvetica"))
+
+                goButton = Button(newWin2, text="Next", command=goButtonCallback)
+
+                # Geometry
+                title.grid(row=0, column=0, columnspan=2)
+                engEntryLabel.grid(row=1, column=0)
+                engEntry.grid(row=1, column=1)
+                freEntryLabel.grid(row=2, column=0)
+                freEntry.grid(row=2, column=1)
+                pluralEntryLabel.grid(row=3, column=0)
+                pluralEntry.grid(row=3, column=1)
+                femEntryLabel.grid(row=4, column=0)
+                femEntry.grid(row=4, column=1)
+                goButton.grid(row=5, column=0, columnspan=2)
+            else:
+                # misc
+                newEng = ""
+                newFre = ""
+                newCom = ""
+
+                # Callback
+                def goButtonCallback():
+                    newEng = engEntry.get()
+                    newFre = freEntry.get()
+                    newCom = comEntry.get()
+
+                    newMisc = Misc(newEng, newFre)
+                    newMisc.commentText = newCom
+
+                    self.miscWordList.append(newMisc)
+                    # Code to add to db
+                    messagebox.showinfo("Done!", "Added misc word " + newFre + "!")
+                    newWin2.quit()
+                    return
+                # Widgets
+                title = Label(newWin2, text="Miscelaneous Word", font=("Helvetica"))
+
+                engEntryLabel = Label(newWin2, text="English:", font=("Helvetica")) # This code could probably be declared before the if statement but o well
+                engEntry = Entry(newWin2, font=("Helvetica"))
+
+                freEntryLabel = Label(newWin2, text="French:", font=("Helvetica"))
+                freEntry = Entry(newWin2, font=("Helvetica"))
+
+                comScrollbar = Scrollbar(newWin2)
+                comEntryLabel = Label(newWin2, text="Comment:", font=("Helvetica"))
+                comEntry = Entry(newWin2, font=("Helvetica"), xscrollcommand=comScrollbar.get)
+                comScrollbar.config(command=comEntry.xview)
+
+                goButton = Button(newWin2, text="Next", command=goButtonCallback)
+                
+            newWin2.mainloop()
 
         radioVariable = StringVar() # This doesn't get set for some reason
         # RadioButton Function
