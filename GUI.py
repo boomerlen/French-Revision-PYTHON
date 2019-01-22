@@ -83,6 +83,28 @@ class mainGUI:
     miscWordList = []
     ruleList = []
 
+    def about(self):
+        newWin = Tk()
+        newWin.title("About")
+        title = Label(newWin, text="About", font=("Helvetica"))
+        text = Text(newWin)
+        text.insert(INSERT, "French Revision Helper is a small tool made and managed by Hugo Sebesta.\nIt is based on Python as it was a lot easier.\nIt's taken a long ass time to make, so u know be a little appreciative or something.\nAlso if you encounter any issues either email me hugo.sebesta@gmail.com, hsebesta20@student.sacs etc or talk to me in person is probably even easier.\nThanks for using this software and feel free to let me know how I can improve it.\nHugo")
+        title.pack()
+        text.pack()
+        newWin.mainloop()
+        return None
+
+    def help(self):
+        newWin = Tk()
+        newWin.title("Help")
+        title = Label(newWin, text="Help", font=("Helvetica"))
+        text = Text(newWin)
+        text.insert(INSERT, "Email or speak to hugo sebesta at hugo.sebesta@gmail.com for support.\n:)")
+        title.pack()
+        text.pack()
+        newWin.mainloop()
+        return None
+
     def newWord(self):
         # NOTE: Forgot about comment text for all words except misc
         # if there is demand, properly implement it.
@@ -430,7 +452,7 @@ class mainGUI:
                 comScrollbar.config(command=comEntry.xview)
 
                 goButton = Button(newWin2, text="Next", command=goButtonCallback)
-                
+
             newWin2.mainloop()
 
         radioVariable = StringVar() # This doesn't get set for some reason
@@ -472,6 +494,9 @@ class mainGUI:
         self.miscWordList = miscs
         self.ruleList = rules
 
+        # Adjustments to main Tk class
+        self.master.title("French Revision Helper")
+        
         # Rendering the main menu
         # Make all the widgets
 
@@ -490,20 +515,20 @@ class mainGUI:
         def menuEditNew():
             self.newWord()
         def menuEditUndo():
-            pass
+            pass # Gonna be realllly hard to implement Not gonna implement (yet)
         def menuEditCut():
-            pass
+            pass # Again another oof Not gonna implement (yet)
         def menuEditCopy():
-            pass
+            pass # Not gonna implement (yet)
         def menuEditPaste():
-            pass
+            pass # Not gonna implement (yet)
         def menuEditDelete():
-            pass
+            pass # Not gonna implement (yet)
 
         def menuHelpAbout():
-            pass
+            self.about()
         def menuHelpHelp():
-            pass
+            self.help()
         # Widgets
         menubar = Menu(self.master)
         filemenu = Menu(menubar, tearoff=0)
@@ -516,11 +541,11 @@ class mainGUI:
 
         editmenu = Menu(menubar, tearoff=0)
         editmenu.add_command(label="New...", command=menuEditNew)
-        editmenu.add_command(label="Undo", command=menuEditUndo)
-        editmenu.add_command(label="Cut", command=menuEditCut)
-        editmenu.add_command(label="Copy", command=menuEditCopy)
-        editmenu.add_command(label="Paste", command=menuEditPaste)
-        editmenu.add_command(label="Delete", command=menuEditDelete)
+        #editmenu.add_command(label="Undo", command=menuEditUndo) # Honestly just gonna be so hard
+        #editmenu.add_command(label="Cut", command=menuEditCut)
+        #editmenu.add_command(label="Copy", command=menuEditCopy)
+        #editmenu.add_command(label="Paste", command=menuEditPaste)
+        #editmenu.add_command(label="Delete", command=menuEditDelete)
         menubar.add_cascade(label="Edit", menu=editmenu)
 
         helpmenu = Menu(menubar, tearoff=0)
