@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/env python
 # FRH.py
 # French Revision Helper main file
 # Hugo Sebesta

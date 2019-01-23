@@ -114,7 +114,7 @@ class mainGUI:
             newWin.destroy()
             newWin2 = Tk()
 
-            if radioVariable.get() == "rule": # Testing purposes
+            if radioVariable.get() == 0: # Testing purposes
                 # Info to fill
                 newName = ""
                 newDesc = ""
@@ -159,7 +159,7 @@ class mainGUI:
                 nextButton.grid(row=5, column=1, columnspan=2)
 
                 newWin2.mainloop()
-            elif radioVariable.get() == "verb": # Testing Purposes
+            elif radioVariable.get() == 1: # Testing Purposes
                 # info to fill - most complex (ofc)
                 newEng = "" # Apparently had to unpack this. Apparently doesn't work like it does in c/c++
                 newFre = ""
@@ -317,7 +317,7 @@ class mainGUI:
                 moreButton.grid(row=3, column=1)
                 goButton.grid(row=3, column=3)
                 # Note not rending all the conjugations cuz they go under "more..."
-            elif radioVariable.get() == "noun":
+            elif radioVariable.get() == 2:
                 # this is becoming rather aids
 
                 # Start with all the widgets (ah duh)
@@ -371,7 +371,7 @@ class mainGUI:
                 genderEntry.grid(row=4, column=1)
                 goButton.grid(row=5, column=0, columnspan=2)
 
-            elif radioVariable.get() == "adjective":
+            elif radioVariable.get() == 3:
                 # Usual shit
                 newEng = ""
                 newFre = ""
@@ -455,7 +455,7 @@ class mainGUI:
 
             newWin2.mainloop()
 
-        radioVariable = StringVar() # This doesn't get set for some reason
+        radioVariable = IntVar() # This doesn't get set for some reason
         # RadioButton Function
         def setRadioVariable():
             pass
@@ -464,11 +464,11 @@ class mainGUI:
         #    print(radioVariable.get())
         # Widgets
         title = Label(newWin, text="Select type to add.", font=("Helvetica", 24))
-        r1 = Radiobutton(newWin, text="Rule", variable=radioVariable, value="rule", command=setRadioVariable)
-        r2 = Radiobutton(newWin, text="Verb", variable=radioVariable, value="verb", command=setRadioVariable)
-        r3 = Radiobutton(newWin, text="Noun", variable=radioVariable, value="noun", command=setRadioVariable)
-        r4 = Radiobutton(newWin, text="Adjective", variable=radioVariable, value="adjective", command=setRadioVariable)
-        r5 = Radiobutton(newWin, text="Other word", variable=radioVariable, value="misc", command=setRadioVariable)
+        r1 = Radiobutton(newWin, text="Rule", variable=radioVariable, value=0, command=setRadioVariable)
+        r2 = Radiobutton(newWin, text="Verb", variable=radioVariable, value=1, command=setRadioVariable)
+        r3 = Radiobutton(newWin, text="Noun", variable=radioVariable, value=2, command=setRadioVariable)
+        r4 = Radiobutton(newWin, text="Adjective", variable=radioVariable, value=3, command=setRadioVariable)
+        r5 = Radiobutton(newWin, text="Other word", variable=radioVariable, value=4, command=setRadioVariable)
         next = Button(newWin, text="Next", command=newWord2)
 
         r1.select()
@@ -485,6 +485,71 @@ class mainGUI:
         # done
         newWin.mainloop()
 
+    def dbExport(self):
+        "Exports the local database to a file provided" # if someone can suggest a useful format for this then be my guest otherwise we're just getting the weird shit express and that's ok
+        # GUI setup
+        win = Tk()
+        win.title("Export")
+        # Required functions
+        def export():
+            fileAddr = entry.get()
+            file f = open(fileAddr, 'w', 0)
+            f.write("French Revision Helper Export by Hugo Sebesta\n")
+            f.write("Verbs:\n")
+            for word in self.verbList:
+                f.write(word.englishDef + "," + word.frenchDef + "\n")
+                f.write(word.verbType.__class__.__name__ + "\n")
+                if word.isReflexive:
+                    f.write("Is reflexive\n")
+                else:
+                    f.write("Isn't reflexive\n")
+                f.write(word.pastParticiple + "\n")
+                f.write("Present Conjugation: ")
+                for i in range(6):
+                    f.write(word.presentConjugation[i] + ",")
+                f.write("\nImparfait Conjugation: ")
+                for i in range(6):
+                    f.write(word.imparfaitConjugation[i] + ",")
+                f.write("\nFuture Simple Conjugation: ")
+                for i in range(6):
+                    f.write(word.futureSimpleConjugation[i] + ",")
+                if word.usesEtreInPasseCompose:
+                    f.write("\nUses Etre in Passe Compose")
+                else:
+                    f.write("\nDoesn't use Etre in Passe Compose")
+                f.write("\n --- \n")
+            f.write("Nouns:\n")
+            for word in self.nounList:
+                f.write(word.englishDef + "," + word.frenchDef + "\n")
+                f.write(word.plural + "," + word.gender.__class__.__name__ + "\n")
+                f.write("\n --- \n")
+            f.write("Adjectives:\n")
+            for word in self.adjectiveList:
+                f.write(word.englishDef + "," + word.frenchDef + "\n")
+                f.write(word.plural + "," + word.feminine + "\n")
+                f.write("\n --- \n")
+            f.write("Misc:\n")
+            for word in self.miscWordList:
+                f.write(word.englishDef + "," + word.frenchDef + "\n")
+                f.write(word.commentText + "\n")
+                f.write("\n --- \n")
+            f.write("Rules:\n")
+            for rule in self.ruleList:
+                f.write(rule.name + "\n")
+                f.write(rule.description + '\n')
+                f.write(rule.example + "\n")
+                f.write("\n --- \n")
+            f.write("End - FRH, Hugo Sebesta")
+            f.close()
+            win.quit()
+            return None
+        # Widgets
+        title = Label(win, text="Enter an address to place the file:", font=("Helvetica"))
+        entry = Entry(win, font=("Helvetica"))
+        button = Button(win, text="Export", command=export)
+
+        win.mainloop()
+
     def __init__(self, root, verbs, nouns, adjectives, miscs, rules):
         # Initial variable setting
         self.master = root
@@ -496,7 +561,7 @@ class mainGUI:
 
         # Adjustments to main Tk class
         self.master.title("French Revision Helper")
-        
+
         # Rendering the main menu
         # Make all the widgets
 
@@ -504,10 +569,8 @@ class mainGUI:
         # Commands
         def menuFileOpen():
             os.execl("FRH.py", "1") # this doesnt work :)
-            pass
         def menuFileExport():
-            # tf we wanna do here jesus
-            pass
+            self.dbExport()
         def menuFileClose():
             # yea idk what this one wouuld do either
             pass
@@ -555,4 +618,118 @@ class mainGUI:
 
         # Done, make modifications to the root window
         self.master.config(menu=menubar)
+
+        # Main GUI Widgets
+        # Design: Frame on left containing list of words/rules (switch between through radiobox at top)
+        # Frame on right containing all details of words/rules
+        # Buttons underneath right frame containing operations
+
+        # Begin with relevant frames
+        # JOKES to be scrollable everything needs to be on a canvas
+        # This is getting complicated...
+        leftFrame = Frame(self.master)
+        leftListFrameCavas = Cavas(leftFrame)
+        leftListFrame = Frame(leftListFrameCavasFrame)
+        rightCavas = Cavas(self.master)
+        rightDataFrame = Frame(rightCanvas)
+
+        # Functions
+        def displayWordLists():
+            pass
+        def displayRuleLists():
+            pass
+        def searchBarGo():
+            pass
+
+        def listItemClickedCallback(event):
+            widget = event.widget
+            pass
+
+        def addNewButtonCallback():
+            pass
+        def revertButtonCallback():
+            pass
+        def deleteButtonCallback():
+            pass
+        def saveButtonCallback():
+            pass
+
+        # Top layer i.e. outside a frame
+        title = Label(self.master, text="French Revision Helper", font=("Helvetica", 24))
+
+        # Right frame buttons
+        addNewButton = Button(rightFrame, text="Add", command=addNewButtonCallback)
+        revertButton = Button(rightFrame, text="Revert", command=revertButtonCallback)
+        deleteButton = Button(rightFrame, text="Delete", command=deleteButtonCallback, state=DISABLED)
+        saveButton = Button(rightFrame, text="Save", command=saveButtonCallback, state=DISABLED)
+
+        # Now left frame
+        wordRadioButton = Radiobutton(leftFrame, text="Words", command=displayWordLists) # Placed side by side at top
+        ruleRadioButton = Radiobutton(leftFrame, text="Rules", command=displayRuleLists)
+
+        # Any search bar would go here once constructed (may as well make the entry for it)
+        searchBarLabel = Label(leftFrame, text="Search:", font=("Helvetica"))
+        searchBarButton = Button(leftFrame, text="Go", command=searchBarGo, state=DISABLED)
+        def searchBarEdit():
+            searchBarButton.config(state="normal")
+        searchBarEntry = Entry(leftFrame, font=("Helvetica"), command=searchBarEdit)
+
+        # Going to have a widget list that will be scrollable
+        # Scrollbar:
+        leftListFrameScrollbar = Scrollbar(leftListFrame, )
+        # Single list containing the words then a break then the next set then a break
+        wordWidgetList = [] # All containing labels, some will be bound to event handlers
+        wordWidgetList.append(Label(leftListFrame, text="Verbs", font=("Helvetica")))
+        for verb in self.verbList:
+            newVerbLabel = Label(leftListFrame, text=verb.englishDef + ", " + verb.frenchDef, font=("Helvetica"))
+            newVerbLabel.bind("<Button-1>", listItemClickedCallback)
+            wordWidgetList.append(newVerbLabel)
+
+        wordWidgetList.append(Label(leftListFrame, text="Nouns", font=("Helvetica")))
+        for noun in self.nounList:
+            newNounLabel = Label(leftListFrame, text=noun.englishDef + ", " + noun.frenchDef, font=("Helvetica"))
+            newNounLabel.bind("<Button-1>", listItemClickedCallback)
+            wordWidgetList.append(newNounLabel)
+
+        wordWidgetList.append(Label(leftListFrame, text='Adjectives', font=("Helvetica")))
+        for adj in self.adjectiveList:
+            newAdjLabel = Label(leftListFrame, text=adj.englishDef + ", " + adj.frenchDef, font=("Helvetica"))
+            newAdjLabel.bind('<Button-1>', listItemClickedCallback)
+            wordWidgetList.append(newAdjLabel)
+
+        wordWidgetList.append(Label(leftListFrame, text="Misc", font=("Helvetica")))
+        for misc in self.miscWordList:
+            newMiscLabel = Label(leftListFrame, text=misc.englishDef + ", " + misc.frenchDef, font=("Helvetica"))
+            newMiscLabel.bind("<Button-1>", listItemClickedCallback)
+            wordWidgetList.append(newMiscLabel)
+
+        # Populate the rule widget list
+        ruleWidgetList = []
+        for rule in self.ruleList:
+            newRuleLabel = Label(leftListFrame, text=rule.name, font=("Helvetica"))
+            newRuleLabel.bind("<Button-1>", listItemClickedCallback)
+            ruleWidgetList.append(newRuleLabel)
+
+        # Set geometry for static parts of the layout
+        title.grid(row=0, column=2, columnspan=2)
+
+        leftFrame.grid(row=2, column=0, rowspan=14, columnspan=6)
+        rightFrame.grid(row=2, column=6, rowspan=14, columnspan=15)
+
+        wordRadioButton.grid(row=0, column=0)
+        ruleRadioButton.grid(row=0, column=3)
+
+        searchBarLabel.grid(row=1, column=0)
+        searchBarEntry.grid(row=1, column=1, columnspan=4)
+        searchBarGo.grid(row=1, column=5)
+
+        leftListFrame.grid(row=2, column=0, rowspan=12, columnspan=6)
+
+        saveButton.grid(row=13, column=0, columnspan=5)
+        deleteButton.grid(row=13, column=5, columnspan=5) # Check these numbers
+        addNewButton.grid(row=13, column=10, columnspan=5)
+
+        # Invoke default button values
+        wordRadioButton.invoke()
+
         self.master.mainloop()
