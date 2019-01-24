@@ -633,6 +633,12 @@ class mainGUI:
         rightCavas = Cavas(self.master)
         rightDataFrame = Frame(rightCanvas)
 
+        # Word and Rule lists of widgets to render
+        # Single list containing the words then a break then the next set then a break
+        # Rule list follows same format
+        wordWidgetList = [] # All containing labels, some will be bound to event handlers
+        ruleWidgetList = [] # All containing labels, rules bound to handlers etc
+
         # Functions
         def displayWordLists():
             pass
@@ -643,7 +649,69 @@ class mainGUI:
 
         def listItemClickedCallback(event):
             widget = event.widget
-            pass
+            # get object corresponding to item clicked (word/rule)
+            i = 0
+            verbDone = False  # Just making sure we don't get into an infinite loop here
+            adjDone = False
+            nounDone = False
+            miscDone = False
+            ruleDone = False
+            while 1:
+                try:
+                    if self.verbList[i].englishDef == widget.cget("text")[:widget.cget("text").find(",")]:
+                        objectToDisplay = self.verbList[i]
+                        break
+                except Exception:
+                    verbDone = True
+                try:
+                    if self.adjectiveList[i].englishDef == widget.cget("text")[:widget.cget("text").find(",")]:
+                        objectToDisplay = self.adjectiveList[i]
+                        break
+                except Exception:
+                    adjDone = True
+                try:
+                    if self.nounList[i].englishDef == widget.cget("text")[:widget.cget("text").find(",")]:
+                        objectToDisplay = self.nounList[i]
+                        break
+                except Exception:
+                    nounDone = True
+                try:
+                    if self.miscWordList[i].englishDef == widget.cget("text")[:widget.cget("text").find(",")]:
+                        objectToDisplay = self.miscWordList[i]
+                        break
+                except Exception:
+                    miscDone = True
+                try:
+                    if self.ruleList[i].name == widget.cget("text"):
+                        objectToDisplay = self.ruleList[i]
+                        break
+                except Exception:
+                    ruleDone = True
+                if verbDone and adjDone and nounDone and miscDone and ruleDone:
+                    print("Error in algorithm determining object in widget")
+                    return
+                i = i + 1
+
+            objectToDisplay = o # just to make my life easier
+            # TODO:
+            # Create all widgets using the frame as the parent (or the canvas once I figure out which I need to do)
+            # Grid them all properly
+            # Regrid the buttons - maybe change them so that they're outside the frames so you don't have to scroll to the bottom to click them
+            # Enable the relevant buttons
+            # Make sure to bind a command for entering text into the entires so that we can swap out the add button for revert or whatever I decided it should be
+            # Do it
+            if o.__class__.__name__ == "Verb":
+                pass
+            elif o.__class__.__name__ == "Noun":
+                pass
+            elif o.__class__.__name__ == "Adjective":
+                pass
+            elif o.__class__.__name__ == "Misc":
+                pass
+            if o.__class__.__name__ == "Rule":
+                # Thank the lord cuz my life's easy peasy
+                pass
+
 
         def addNewButtonCallback():
             pass
@@ -677,8 +745,7 @@ class mainGUI:
         # Going to have a widget list that will be scrollable
         # Scrollbar:
         leftListFrameScrollbar = Scrollbar(leftListFrame, )
-        # Single list containing the words then a break then the next set then a break
-        wordWidgetList = [] # All containing labels, some will be bound to event handlers
+
         wordWidgetList.append(Label(leftListFrame, text="Verbs", font=("Helvetica")))
         for verb in self.verbList:
             newVerbLabel = Label(leftListFrame, text=verb.englishDef + ", " + verb.frenchDef, font=("Helvetica"))
@@ -704,7 +771,6 @@ class mainGUI:
             wordWidgetList.append(newMiscLabel)
 
         # Populate the rule widget list
-        ruleWidgetList = []
         for rule in self.ruleList:
             newRuleLabel = Label(leftListFrame, text=rule.name, font=("Helvetica"))
             newRuleLabel.bind("<Button-1>", listItemClickedCallback)
