@@ -24,6 +24,7 @@ import MySQLdb
 from Classes import *
 from Funcs import *
 from GUI import *
+from SQLDB.py import *
 
 # The database has the following layout:
 # Login details: 'client', 'password'
@@ -78,26 +79,15 @@ from GUI import *
 serverVars = []
 
 # Call function to open dialogue to get server values from user
-# SQL Server Connection
+# SQL Server Connection Handler Class called
 serverVars = openingDialogueScreen() # Not sure why but this opens 2 windows...
 
-try:
-    database = MySQLdb.connect(serverVars[0], serverVars[1], serverVars[2], serverVars[3])
-except:
-    # Failed! Check connection details
-    print("Error: Incorrect login details! Restart application!")
-    errorInvalidLogin()
-    quit()
-
-cursor = database.cursor()
-cursor.execute("SELECT VERSION()") # Verify connection
-databaseVersion = cursor.fetchone()
-print("Database Version is %s. Connection Successful!" % databaseVersion)
+dbHandler = DB(serverVars[0], serverVars[1], serverVars[2], serverVars[3])
 
 # All we need to pass to functions responsible for managing database access
 
 # Initialisation
-wordList = initWordList(cursor)
+wordList = dbHandler.initWordList()
 verbList = []
 nounList = []
 adjectiveList = []
@@ -113,14 +103,10 @@ for word in wordList:
         verbList.append(word)
     #print(word.englishDef) # Testing purposes
 # Defined all word lists
-ruleList = initRuleList(cursor)
+ruleList = dbHandler.initRuleList()
 
 # Init Done
-# Call main window class with word variables
+# Call main window class with word variables and dbHandler class
 
-# This file is disintegrating into documentation as all of its functions get replaced by instances of classes in other files
-# This is a good thing, nice and neat
-# One day I'll clean all these comments too!
-
-mainGUICLass = mainGUI(Tk(), verbList, nounList, adjectiveList, miscWordList, ruleList)
+mainGUICLass = mainGUI(Tk(), verbList, nounList, adjectiveList, miscWordList, ruleList, dbHandler)
 database.close()

@@ -9,6 +9,7 @@ import os
 # Mine
 from Classes import *
 from Funcs import *
+from SQLDB.py import *
 
 # Global Vars
 #global actualRadioVariable ?
@@ -125,7 +126,7 @@ class mainGUI:
                     newDesc = descriptionEntry.get()
                     newEx = exampleEntry.get()
                     self.ruleList.append(Rule(newName, newDesc, newEx))
-                    # addRule(curs, Rule(newName, newDesc, newEx), db)
+                    self.dbHandler.newRule(Rule(newName, newDesc, newEx))
                     messagebox.showinfo("Done!", "Created rule " + newName + "!")
                     newWin2.destroy()
                     return
@@ -240,7 +241,7 @@ class mainGUI:
                     newVerb.futureSimpleConjugation = newFutur
                     newVerb.usesEtreInPasseCompose = newEtre
                     self.verbList.append(newVerb)
-                    # call the shit to add the verb to the db passing newVerb
+                    self.dbHandler.newWord(newVerb)
                     messagebox.showinfo("Done!", "Created verb " + newFre + "!")
                     newWin2.destroy()
                     return
@@ -338,7 +339,7 @@ class mainGUI:
                     else:
                         gender = Feminine()
                     self.nounList.append(Noun(newEng, newFre, newPlural, gender))
-                    # whatever function I figure out I'm using for the DB
+                    self.dbHandler.newWord(Noun(newEng, newFre, newPlural, gender))
                     newWin2.quit()
                     messagebox.showinfo("Done!", "Added noun " + newFre + "!")
                     return
@@ -385,7 +386,7 @@ class mainGUI:
                     newPluralEnd = pluralEntry.get()
                     newFemEnd = femEntry.get()
                     self.adjectiveList.append(Adjective(newEng, newFre, newPluralEnd, newFemEnd))
-                    # Code to add it to DB
+                    self.dbHandler.newWord(Adjective(newEng, newFre, newPluralEnd, newFemEnd))
                     messagebox.showinfo("Done!", "Added adjective " + newFre + "!")
                     newWin2.quit()
                     return
@@ -550,7 +551,9 @@ class mainGUI:
 
         win.mainloop()
 
-    def __init__(self, root, verbs, nouns, adjectives, miscs, rules):
+    def __init__(self, root, verbs, nouns, adjectives, miscs, rules, db):
+        # Database Handling Class
+        self.dbHandler = db
         # Initial variable setting
         self.master = root
         self.verbList = verbs
