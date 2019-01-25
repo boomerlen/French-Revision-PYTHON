@@ -5,25 +5,28 @@
 import MySQLdb
 from Classes import *
 from Funcs import *
-from GUI import * # in case we need to complain that it doesn't work
+from tkinter import messagebox
 
 class DB:
     "Class containing all methods for database use and access"
 
     serverIP = "192.168.0.94"
-    serverUser = "Client"
+    serverUser = "client"
     serverPass = "password"
     serverDBName = "frh"
 
-    def __init__(self, ip = "192.168.0.94", user = "Client", pass = "password", db = "frh"):
+    database = None # Override it immediately
+    cursor = None # yet
+
+    def __init__(self, ip = "192.168.0.94", user = "client", passwd = "password", db = "frh"):
         self.serverIP = ip
         self.serverUser = user
-        self.serverPass = pass
+        self.serverPass = passwd
         self.serverDBName = db
         try:
-            self.database = MySQLdb.connect(self.serverIP, self.serverUser, self.serverPass, self.DBName)
+            self.database = MySQLdb.connect(self.serverIP, self.serverUser, self.serverPass, self.serverDBName)
         except:
-            errorInvalidLogin()
+            messagebox.showerror("ERROR", "Cannot connect to server!")
             quit()
         self.cursor = self.database.cursor()
 
@@ -298,3 +301,9 @@ class DB:
         self.addWord(newWord)
         # Much easier lmao
         return None
+
+    def __del__(self):
+        try:
+            self.database.close()
+        except:
+            pass # We won't actually every get here in practice just that the compiler doesn't know that

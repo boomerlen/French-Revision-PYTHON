@@ -24,7 +24,7 @@ import MySQLdb
 from Classes import *
 from Funcs import *
 from GUI import *
-from SQLDB.py import *
+from SQLDB import *
 
 # The database has the following layout:
 # Login details: 'client', 'password'
@@ -109,4 +109,3 @@ ruleList = dbHandler.initRuleList()
 # Call main window class with word variables and dbHandler class
 
 mainGUICLass = mainGUI(Tk(), verbList, nounList, adjectiveList, miscWordList, ruleList, dbHandler)
-database.close()

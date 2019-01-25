@@ -9,7 +9,7 @@ import os
 # Mine
 from Classes import *
 from Funcs import *
-from SQLDB.py import *
+from SQLDB import *
 
 # Global Vars
 #global actualRadioVariable ?
@@ -114,6 +114,7 @@ class mainGUI:
         def newWord2():
             newWin.destroy()
             newWin2 = Tk()
+            radioVariable = IntVar() # This doesn't get set for some reason
 
             if radioVariable.get() == 0: # Testing purposes
                 # Info to fill
@@ -126,7 +127,7 @@ class mainGUI:
                     newDesc = descriptionEntry.get()
                     newEx = exampleEntry.get()
                     self.ruleList.append(Rule(newName, newDesc, newEx))
-                    self.dbHandler.newRule(Rule(newName, newDesc, newEx))
+                    self.dbHandler.addRule(Rule(newName, newDesc, newEx))
                     messagebox.showinfo("Done!", "Created rule " + newName + "!")
                     newWin2.destroy()
                     return
@@ -241,7 +242,7 @@ class mainGUI:
                     newVerb.futureSimpleConjugation = newFutur
                     newVerb.usesEtreInPasseCompose = newEtre
                     self.verbList.append(newVerb)
-                    self.dbHandler.newWord(newVerb)
+                    self.dbHandler.addWord(newVerb)
                     messagebox.showinfo("Done!", "Created verb " + newFre + "!")
                     newWin2.destroy()
                     return
@@ -339,7 +340,7 @@ class mainGUI:
                     else:
                         gender = Feminine()
                     self.nounList.append(Noun(newEng, newFre, newPlural, gender))
-                    self.dbHandler.newWord(Noun(newEng, newFre, newPlural, gender))
+                    self.dbHandler.addWord(Noun(newEng, newFre, newPlural, gender))
                     newWin2.quit()
                     messagebox.showinfo("Done!", "Added noun " + newFre + "!")
                     return
@@ -386,7 +387,7 @@ class mainGUI:
                     newPluralEnd = pluralEntry.get()
                     newFemEnd = femEntry.get()
                     self.adjectiveList.append(Adjective(newEng, newFre, newPluralEnd, newFemEnd))
-                    self.dbHandler.newWord(Adjective(newEng, newFre, newPluralEnd, newFemEnd))
+                    self.dbHandler.addWord(Adjective(newEng, newFre, newPluralEnd, newFemEnd))
                     messagebox.showinfo("Done!", "Added adjective " + newFre + "!")
                     newWin2.quit()
                     return
@@ -494,7 +495,7 @@ class mainGUI:
         # Required functions
         def export():
             fileAddr = entry.get()
-            file f = open(fileAddr, 'w', 0)
+            f = open(fileAddr, 'w', 0)
             f.write("French Revision Helper Export by Hugo Sebesta\n")
             f.write("Verbs:\n")
             for word in self.verbList:
@@ -631,11 +632,18 @@ class mainGUI:
         # JOKES to be scrollable everything needs to be on a canvas
         # This is getting complicated...
         leftFrame = Frame(self.master)
-        leftListFrameCavas = Cavas(leftFrame)
-        leftListFrame = Frame(leftListFrameCavasFrame)
-        rightCavas = Cavas(self.master)
+        leftListFrameCanvas = Canvas(leftFrame)
+        leftListFrame = Frame(leftListFrameCanvas)
+        rightFrame = Frame(self.master)
+        rightCanvas = Canvas(rightFrame)
         rightDataFrame = Frame(rightCanvas)
 
+        # Scrollbar setup
+        leftListScrollbar = Scrollbar(leftListFrame, orient="vertical", command=leftListFrameCanvas.yview)
+        leftListFrameCanvas.configure(yscrollcommand=leftListScrollbar.set)
+
+        rightScrollbar = Scrollbar(rightDataFrame, orient="vertical", command=rightCanvas.yview)
+        rightCanvas.configure(yscrollcommand=rightScrollbar.set)
         # Word and Rule lists of widgets to render
         # Single list containing the words then a break then the next set then a break
         # Rule list follows same format
@@ -644,9 +652,11 @@ class mainGUI:
 
         # Functions
         def displayWordLists():
-            pass
+            for word in wordWidgetList:
+                word.pack()
         def displayRuleLists():
-            pass
+            for rule in ruleWidgetList:
+                rule.pack()
         def searchBarGo():
             pass
 
@@ -743,11 +753,11 @@ class mainGUI:
         searchBarButton = Button(leftFrame, text="Go", command=searchBarGo, state=DISABLED)
         def searchBarEdit():
             searchBarButton.config(state="normal")
-        searchBarEntry = Entry(leftFrame, font=("Helvetica"), command=searchBarEdit)
+        searchBarEntry = Entry(leftFrame, font=("Helvetica"))
+        searchBarEntry.bind("<Key>", searchBarButton.configure(state=NORMAL))
 
         # Going to have a widget list that will be scrollable
-        # Scrollbar:
-        leftListFrameScrollbar = Scrollbar(leftListFrame, )
+        # Scrollbar declared earlier to make my life easier
 
         wordWidgetList.append(Label(leftListFrame, text="Verbs", font=("Helvetica")))
         for verb in self.verbList:
@@ -785,20 +795,33 @@ class mainGUI:
         leftFrame.grid(row=2, column=0, rowspan=14, columnspan=6)
         rightFrame.grid(row=2, column=6, rowspan=14, columnspan=15)
 
+        # Canvases
+        rightCanvas.grid(row=0, column=0, rowspan=13, columnspan=14)
+        leftListFrameCanvas.grid(row=0, column=0, rowspan=12, columnspan=5)
+
         wordRadioButton.grid(row=0, column=0)
         ruleRadioButton.grid(row=0, column=3)
 
         searchBarLabel.grid(row=1, column=0)
         searchBarEntry.grid(row=1, column=1, columnspan=4)
-        searchBarGo.grid(row=1, column=5)
+        searchBarButton.grid(row=1, column=5)
 
-        leftListFrame.grid(row=2, column=0, rowspan=12, columnspan=6)
+        leftListFrame.pack()
+        rightDataFrame.pack()
 
         saveButton.grid(row=13, column=0, columnspan=5)
         deleteButton.grid(row=13, column=5, columnspan=5) # Check these numbers
         addNewButton.grid(row=13, column=10, columnspan=5)
 
+
+        # Scrollbars, interesting shit
+        leftListScrollbar.grid(row=0, column=5, rowspan=14)
+        rightScrollbar.grid(row=0, column=13, rowspan=13)
+
         # Invoke default button values
         wordRadioButton.invoke()
+
+        leftListFrameCanvas.create_window((0,0), window=leftListFrame, anchor="nw")
+        rightCanvas.create_window((0,0), window=rightDataFrame, anchor="nw")
 
         self.master.mainloop()
