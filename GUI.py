@@ -4,7 +4,7 @@
 
 # External
 from tkinter import *
-from tkinter import messagebox
+from time import sleep
 import os
 # Mine
 from Classes import *
@@ -21,7 +21,10 @@ def openingDialogueScreen():
     dbPass = "password"
     db = "frh"
 
+    # Comments are for debug
+
     openingDialogue = Tk()
+
     title = Label(openingDialogue, text="WELCOME", font=("Helvetica", 44))
 
     frame = LabelFrame(openingDialogue, text="Connection Details:", font=("Helvetica"))
@@ -652,11 +655,15 @@ class mainGUI:
 
         # Functions
         def displayWordLists():
+            i = 0
             for word in wordWidgetList:
-                word.pack()
+                word.grid(row=i, column=0, columnspan=4) # might be wrong
+                i = i + 1
         def displayRuleLists():
+            i = 0
             for rule in ruleWidgetList:
-                rule.pack()
+                rule.grid(row=i, column=0, columnspan=4)
+                i = i + 1
         def searchBarGo():
             pass
 
@@ -790,14 +797,14 @@ class mainGUI:
             ruleWidgetList.append(newRuleLabel)
 
         # Set geometry for static parts of the layout
-        title.grid(row=0, column=2, columnspan=2)
+        title.grid(row=0, column=1, columnspan=4)
 
-        leftFrame.grid(row=2, column=0, rowspan=14, columnspan=6)
-        rightFrame.grid(row=2, column=6, rowspan=14, columnspan=15)
+        leftFrame.grid(row=2, column=0, rowspan=14, columnspan=8)
+        rightFrame.grid(row=2, column=8, rowspan=14, columnspan=15)
 
         # Canvases
         rightCanvas.grid(row=0, column=0, rowspan=13, columnspan=14)
-        leftListFrameCanvas.grid(row=0, column=0, rowspan=12, columnspan=5)
+        leftListFrameCanvas.grid(row=0, column=0, rowspan=12, columnspan=7)
 
         wordRadioButton.grid(row=0, column=0)
         ruleRadioButton.grid(row=0, column=3)
