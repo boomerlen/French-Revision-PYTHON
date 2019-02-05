@@ -25,6 +25,7 @@ def openingDialogueScreen():
 
     openingDialogue = Tk()
 
+
     title = Label(openingDialogue, text="WELCOME", font=("Helvetica", 44))
 
     frame = LabelFrame(openingDialogue, text="Connection Details:", font=("Helvetica"))
