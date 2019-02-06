@@ -21,10 +21,7 @@ def openingDialogueScreen():
     dbPass = "password"
     db = "frh"
 
-    # Comments are for debug
-
     openingDialogue = Tk()
-
 
     title = Label(openingDialogue, text="WELCOME", font=("Helvetica", 44))
 

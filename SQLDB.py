@@ -5,7 +5,6 @@
 import MySQLdb
 from Classes import *
 from Funcs import *
-from tkinter import messagebox
 
 class DB:
     "Class containing all methods for database use and access"
@@ -26,7 +25,7 @@ class DB:
         try:
             self.database = MySQLdb.connect(self.serverIP, self.serverUser, self.serverPass, self.serverDBName)
         except:
-            messagebox.showerror("ERROR", "Cannot connect to server!")
+            errorScreen("ERROR", "Cannot connect to server!")
             quit()
         self.cursor = self.database.cursor()
 

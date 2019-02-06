@@ -4,7 +4,7 @@
 # Hugo Sebesta
 
 # External modules for import:
-import MySQLdb
+#import MySQLdb
 #from tkinter import *
 #from tkinter import messagebox
 
@@ -22,7 +22,6 @@ import MySQLdb
 # The following functions returning ints
 # JE (0), TU (1), ON (2), NOUS (3), VOUS (4), ILS (5)
 from Classes import *
-from Funcs import *
 from GUI import *
 from SQLDB import *
 
