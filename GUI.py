@@ -78,7 +78,7 @@ def errorInvalidLogin():
     return None
 
 class mainGUI:
-    master = Tk()
+    #master = Tk() This fucking line fucked me over for like two fucking months fuck me
     verbList = []
     nounList = []
     adjectiveList = []

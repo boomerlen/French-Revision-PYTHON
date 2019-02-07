@@ -82,7 +82,7 @@ serverVars = []
 # Call function to open dialogue to get server values from user
 # SQL Server Connection Handler Class called
 
-serverVars = openingDialogueScreen() # Not sure why but this opens 2 windows...
+serverVars = openingDialogueScreen() 
 
 dbHandler = DB(serverVars[0], serverVars[1], serverVars[2], serverVars[3])
 
