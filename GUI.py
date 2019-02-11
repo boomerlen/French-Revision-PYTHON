@@ -16,7 +16,7 @@ from SQLDB import *
 
 def openingDialogueScreen():
     # Default vars:
-    dbIP = "192.168.0.94"
+    dbIP = "58.168.115.13"
     dbUser = "client"
     dbPass = "password"
     db = "frh"
@@ -112,10 +112,11 @@ class mainGUI:
         # if there is demand, properly implement it.
         newWin = Tk()
         # newWord2
+        radioVariable = IntVar()
         def newWord2():
             newWin.destroy()
             newWin2 = Tk()
-            radioVariable = IntVar() # This doesn't get set for some reason
+             # This doesn't get set for some reason
 
             if radioVariable.get() == 0: # Testing purposes
                 # Info to fill
@@ -458,7 +459,6 @@ class mainGUI:
 
             newWin2.mainloop()
 
-        radioVariable = IntVar() # This doesn't get set for some reason
         # RadioButton Function
         def setRadioVariable():
             pass

@@ -11,7 +11,7 @@ from Funcs import *
 class DB:
     "Class containing all methods for database use and access"
 
-    serverIP = "192.168.0.94"
+    serverIP = "58.168.115.13"
     serverUser = "client"
     serverPass = "password"
     serverDBName = "frh"
@@ -19,7 +19,7 @@ class DB:
     database = None # Override it immediately
     cursor = None # yet
 
-    def __init__(self, ip = "192.168.0.94", user = "client", passwd = "password", db = "frh"):
+    def __init__(self, ip = "58.168.115.13", user = "client", passwd = "password", db = "frh"):
         self.serverIP = ip
         self.serverUser = user
         self.serverPass = passwd
