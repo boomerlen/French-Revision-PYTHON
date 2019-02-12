@@ -116,8 +116,8 @@ class mainGUI:
         def newWord2():
             newWin.destroy()
             newWin2 = Tk()
-             # This doesn't get set for some reason
-
+            # This doesn't get set for some reason
+            print(radioVariable.get())
             if radioVariable.get() == 0: # Testing purposes
                 # Info to fill
                 newName = ""
