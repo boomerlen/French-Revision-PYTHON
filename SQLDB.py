@@ -11,6 +11,7 @@ from Funcs import *
 class DB:
     "Class containing all methods for database use and access"
 
+    debugMode = False # Disables most operations, for debugging GUI, logic etc purposes
     serverIP = "58.168.115.13"
     serverUser = "client"
     serverPass = "password"
@@ -34,6 +35,10 @@ class DB:
     def initWordList(self):
         "Returns a list of all words from the database"
         words = []
+
+        if self.debugMode:
+            return words
+
         try:
             self.cursor.execute("SELECT * FROM adjective")
             adjectives = self.cursor.fetchall()
@@ -130,6 +135,10 @@ class DB:
     def initRuleList(self):
         'Returns a list of all rules from the database'
         rules = []
+
+        if self.debugMode:
+            return rules
+
         try:
             self.cursor.execute("SELECT * FROM rule")
             rs = self.cursor.fetchall()
@@ -143,6 +152,10 @@ class DB:
 
     def addWord(self, word):
         'Adds a word to the database given the database cursor, the word, and the database object'
+
+        if self.debugMode:
+            return False
+
         if word.__class__.__name__ == "Adjective":
             if word.gender.__class__.__name__ == "Masculine":
                 gender = 'm'
@@ -245,6 +258,10 @@ class DB:
 
     def addRule(self, rule):
         "Inserts a rule into the SQL Server"
+
+        if self.debugMode:
+            return False
+
         query = "INSERT INTO rule (name, description, example) VALUES ('" + rule.name + "', '"+ rule.description + "', '"
         if not rule.example:
             query = query + "')"
@@ -260,6 +277,10 @@ class DB:
 
     def modifyRule(self, rule, newRule):
         "Modifies a Rule in the SQL Server"
+
+        if self.debugMode:
+            return False
+
         queryStem = "UPDATE rule SET "
         if rule.example != newRule.example:
             newQuery = queryStem + "example = '" + newRule.example + "' WHERE NAME = '" + rule.name + "'"
@@ -281,6 +302,10 @@ class DB:
 
     def deleteObject(self, obj):
         "Deletes an object from the SQL server"
+
+        if self.debugMode:
+            return False
+
         if obj.__class__.__name__ != "Rule":
             query = "DELETE FROM " + obj.__class__.__name__.lower() + " WHERE english = '" + obj.englishDef + "'"
         else:
@@ -297,6 +322,10 @@ class DB:
     def modifyWord(self, word, newWord):
         "Modifies the SQL DB of a word given the original word object and the new word object "
         # This version is optimised against the old one by just deleting and replacing the word
+
+        if self.debugMode:
+            return False
+
         self.deleteObject(word)
         # And replace
         self.addWord(newWord)
@@ -304,6 +333,10 @@ class DB:
         return None
 
     def __del__(self):
+
+        if self.debugMode:
+            return None
+
         try:
             self.database.close()
         except:

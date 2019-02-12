@@ -1,5 +1,6 @@
 # Testing.py
 # Used for testing concepts
+# This works but the implementation in GUI.py doesnt?
 
 from tkinter import *
 
