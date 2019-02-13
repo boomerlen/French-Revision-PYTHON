@@ -32,6 +32,10 @@ class DB:
             quit()
         self.cursor = self.database.cursor()
 
+    def debug(self):
+        self.debugMode = True
+        print("debug mode")
+
     def initWordList(self):
         "Returns a list of all words from the database"
         words = []

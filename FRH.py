@@ -82,9 +82,10 @@ serverVars = []
 # Call function to open dialogue to get server values from user
 # SQL Server Connection Handler Class called
 
-serverVars = openingDialogueScreen() 
+serverVars = openingDialogueScreen()
 
 dbHandler = DB(serverVars[0], serverVars[1], serverVars[2], serverVars[3])
+dbHandler.debug()
 
 # All we need to pass to functions responsible for managing database access
 
