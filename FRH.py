@@ -74,6 +74,7 @@ from SQLDB import *
 
 
 # Main script
+debugMode = True
 
 # SQL Server Connection
 
@@ -81,11 +82,16 @@ serverVars = []
 
 # Call function to open dialogue to get server values from user
 # SQL Server Connection Handler Class called
+if debugMode:
+    for i in range(4):
+        serverVars.append("")
+else:
+    serverVars = openingDialogueScreen()
 
-serverVars = openingDialogueScreen()
+dbHandler = DB(serverVars[0], serverVars[1], serverVars[2], serverVars[3], debugMode)
 
-dbHandler = DB(serverVars[0], serverVars[1], serverVars[2], serverVars[3])
-dbHandler.debug()
+if debugMode:
+    dbHandler.debug()
 
 # All we need to pass to functions responsible for managing database access
 

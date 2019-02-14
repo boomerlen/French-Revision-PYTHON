@@ -20,11 +20,13 @@ class DB:
     database = None # Override it immediately
     cursor = None # yet
 
-    def __init__(self, ip = "58.168.115.13", user = "client", passwd = "password", db = "frh"):
+    def __init__(self, ip = "58.168.115.13", user = "client", passwd = "password", db = "frh", debug = False):
         self.serverIP = ip
         self.serverUser = user
         self.serverPass = passwd
         self.serverDBName = db
+        if debug:
+            return
         try:
             self.database = MySQLdb.connect(self.serverIP, self.serverUser, self.serverPass, self.serverDBName)
         except:

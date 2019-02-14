@@ -459,22 +459,16 @@ class mainGUI:
 
             newWin2.mainloop()
 
-        # RadioButton Function
-        def setRadioVariable():
-            pass
-        #    actualRadioVariable = radioVariable.get()
-        #    print(actualRadioVariable)
-        #    print(radioVariable.get())
         # Widgets
         title = Label(newWin, text="Select type to add.", font=("Helvetica", 24))
-        r1 = Radiobutton(newWin, text="Rule", variable=radioVariable, value=0, command=setRadioVariable)
-        r2 = Radiobutton(newWin, text="Verb", variable=radioVariable, value=1, command=setRadioVariable)
-        r3 = Radiobutton(newWin, text="Noun", variable=radioVariable, value=2, command=setRadioVariable)
-        r4 = Radiobutton(newWin, text="Adjective", variable=radioVariable, value=3, command=setRadioVariable)
-        r5 = Radiobutton(newWin, text="Other word", variable=radioVariable, value=4, command=setRadioVariable)
+        r1 = Radiobutton(newWin, text="Rule", variable=radioVariable, value=0)
+        r2 = Radiobutton(newWin, text="Verb", variable=radioVariable, value=1)
+        r3 = Radiobutton(newWin, text="Noun", variable=radioVariable, value=2)
+        r4 = Radiobutton(newWin, text="Adjective", variable=radioVariable, value=3)
+        r5 = Radiobutton(newWin, text="Other word", variable=radioVariable, value=4)
         next = Button(newWin, text="Next", command=newWord2)
 
-        r1.select()
+        #r1.select()
 
         # Layout
         title.grid(row=0, column=0,columnspan=3)
