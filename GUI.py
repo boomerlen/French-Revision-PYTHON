@@ -113,10 +113,13 @@ class mainGUI:
         newWin = Tk()
         # newWord2
         radioVariable = IntVar()
+        print("Line 116, radioVariable: " + str(radioVariable.get()))
         def newWord2():
+            print("Line 118, radioVariable: " + str(radioVariable.get()))
             newWin.destroy()
             newWin2 = Tk()
             # This doesn't get set for some reason
+            print("Line 122, radioVariable: " + str(radioVariable.get()))
             print(radioVariable.get())
             if radioVariable.get() == 0: # Testing purposes
                 # Info to fill
@@ -468,7 +471,8 @@ class mainGUI:
         r5 = Radiobutton(newWin, text="Other word", variable=radioVariable, value=4)
         next = Button(newWin, text="Next", command=newWord2)
 
-        #r1.select()
+        r2.select()
+        print("Line 473, radiovariable: " + str(radioVariable.get()))
 
         # Layout
         title.grid(row=0, column=0,columnspan=3)

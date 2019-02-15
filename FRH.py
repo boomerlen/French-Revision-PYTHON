@@ -4,6 +4,7 @@
 # Hugo Sebesta
 
 # External modules for import:
+import sys
 #import MySQLdb
 #from tkinter import *
 #from tkinter import messagebox
@@ -71,10 +72,17 @@ from SQLDB import *
 # x Modify rule or word - UNTESTED
 # x Delete rule or word - UNTESTED
 
+# Command line args for debug
+debugMode = False
 
+if len(sys.argv) > 1:
+    if sys.argv[1] == "-d":
+        debugMode = True
+    if sys.argv[1] == "-h":
+        print("Run with -d to debug, otherwise run without arguments.")
+        quit()
 
 # Main script
-debugMode = True
 
 # SQL Server Connection
 
